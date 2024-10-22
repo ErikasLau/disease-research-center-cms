@@ -13,7 +13,16 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
+                        {{ __('Valdymo skydas') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('pacients')" :active="request()->routeIs('pacients')">
+                        {{ __('Pacientai') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('doctors')" :active="request()->routeIs('doctors')">
+                        {{ __('Gydytojai') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('labaratorians')" :active="request()->routeIs('labaratorians')">
+                        {{ __('Laborantai') }}
                     </x-nav-link>
                 </div>
             </div>
