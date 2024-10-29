@@ -4,19 +4,19 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
         Schema::create('doctors', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('user_id')->unique();
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->unsignedBigInteger('doctor_specialization_id')->unique()->nullable();
-            $table->foreign('doctor_specialization_id')->references('id')->on('doctor_specializations');
+            $table->ulid('id')->primary();
+            $table->string('license_number');
+
+            $table->foreignUlid('user_id')->references('id')->on('users');
+            $table->foreignUlid('doctor_specialization_id')->references('id')->on('doctor_specializations');
+
             $table->timestamps();
         });
     }

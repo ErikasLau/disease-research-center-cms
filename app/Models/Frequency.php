@@ -10,6 +10,6 @@ enum Frequency: int
 
     public static function getOptions(): array
     {
-        return array_map(fn (Frequency $case) => $case->value, Frequency::cases());
+        return array_map(fn(Frequency $case) => $case->value, Frequency::cases());
     }
 }

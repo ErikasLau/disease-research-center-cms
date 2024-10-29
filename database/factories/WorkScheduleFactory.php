@@ -3,11 +3,12 @@
 namespace Database\Factories;
 
 use App\Models\Frequency;
+use App\Models\WorkSchedule;
 use Carbon\WeekDay;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\WorkSchedule>
+ * @extends Factory<WorkSchedule>
  */
 class WorkScheduleFactory extends Factory
 {

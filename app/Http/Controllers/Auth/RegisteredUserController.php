@@ -31,10 +31,14 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:40'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'phone_number' => ['required', 'string', 'numeric', 'max:255'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'phone_number' => ['required', 'string', 'max:255'],
+        ], [
+            'name.required' => __("Lauką „Vardas“ privaloma užpildyti"),
+            'name.string' => __("Laukas „Vardas“ gali būti sudarytas tik iš raidžių"),
+            'name.max' => __("Laukas „Vardas“ negali viršyti 40-ies simbolių ribos")
         ]);
 
         $user = User::create([

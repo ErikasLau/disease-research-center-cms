@@ -14,6 +14,6 @@ enum WeekDays: int
 
     public static function getOptions(): array
     {
-        return array_map(fn (WeekDays $case) => $case->value, WeekDays::cases());
+        return array_map(fn(WeekDays $case) => $case->value, WeekDays::cases());
     }
 }

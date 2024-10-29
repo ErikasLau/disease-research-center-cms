@@ -11,6 +11,6 @@ enum Role: int
 
     public static function getOptions(): array
     {
-        return array_map(fn (Role $case) => $case->value, Role::cases());
+        return array_map(fn(Role $case) => $case->value, Role::cases());
     }
 }

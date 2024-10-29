@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
+use Database\Factories\WorkScheduleFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WorkSchedule extends Model
 {
-    /** @use HasFactory<\Database\Factories\WorkScheduleFactory> */
-    use HasFactory;
+    /** @use HasFactory<WorkScheduleFactory> */
+    use HasFactory, HasUlids;
 
     protected $fillable = [
         'shift_start_time',
@@ -20,7 +22,7 @@ class WorkSchedule extends Model
 
     public $timestamps = true;
 
-    public function doctor(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function doctor(): BelongsTo
     {
         return $this->belongsTo(Doctor::class);
     }

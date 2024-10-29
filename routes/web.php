@@ -1,18 +1,34 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Models\Examination;
 use App\Models\User;
+use App\Models\Visit;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/login');
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return view('patient-dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('laborant/dashboard', function () {
+    return view('laborant-dashboard');
+})->middleware(['auth', 'verified'])->name('laborant-dashboard');
+
+Route::get('doctor/dashboard', function () {
+    return view('doctor-dashboard');
+})->middleware(['auth', 'verified'])->name('doctor-dashboard');
 
 Route::get('/dashboard/create-doctor', function () {
     return view('admin.create-doctor');
+});
+
+Route::get('/examination/{id}', function (string $id) {
+    $examination = Examination::where('id', $id)->with('patient.user')->with('result')->firstOrFail();
+
+    return view('examination.examination', compact('examination'));
 });
 
 Route::get('/patients', function () {
@@ -48,6 +64,12 @@ Route::get('/laboratorian/{id}', function (string $id) {
 
     return view('laboratorian.laboratorian', compact('laboratorian'));
 })->name('laboratorian');
+
+Route::get('/visit/{id}', function (string $id) {
+   $visit = Visit::where('id', $id)->with('doctor.user')->with('doctor.specialization')->with('patient.user')->firstOrFail();
+
+   return view('visit.visit', compact('visit'));
+})->name('visit');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

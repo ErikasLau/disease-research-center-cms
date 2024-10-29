@@ -2,17 +2,17 @@
 
 namespace App\Models;
 
+use Database\Factories\DoctorSpecializationFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class DoctorSpecialization extends Model
 {
-    /** @use HasFactory<\Database\Factories\DoctorSpecializationFactory> */
-    use HasFactory;
+    /** @use HasFactory<DoctorSpecializationFactory> */
+    use HasFactory, HasUlids;
 
     protected $fillable = [
         'name',
@@ -21,8 +21,8 @@ class DoctorSpecialization extends Model
 
     public $timestamps = true;
 
-    public function doctor(): BelongsToMany
+    public function doctors(): BelongsTo
     {
-        return $this->BelongsToMany(Doctor::class);
+        return $this->BelongsTo(Doctor::class, 'doctor_specialization_id', 'id');
     }
 }

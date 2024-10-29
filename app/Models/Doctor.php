@@ -2,17 +2,24 @@
 
 namespace App\Models;
 
+use Database\Factories\DoctorFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Doctor extends Model
 {
-    /** @use HasFactory<\Database\Factories\DoctorFactory> */
-    use HasFactory;
+    /** @use HasFactory<DoctorFactory> */
+    use HasFactory, HasUlids;
 
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    protected $fillable = [
+        'license_number',
+    ];
+
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -24,6 +31,6 @@ class Doctor extends Model
 
     public function specialization(): HasOne
     {
-        return $this->HasOne(DoctorSpecialization::class, 'id');
+        return $this->HasOne(DoctorSpecialization::class, 'id', 'doctor_specialization_id');
     }
 }
