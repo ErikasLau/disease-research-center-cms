@@ -2,24 +2,25 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Models\Examination;
+use App\Models\Role;
 use App\Models\User;
 use App\Models\Visit;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/login');
 
 Route::get('/dashboard', function () {
-    return view('patient-dashboard');
+    if (Auth::user()->role == Role::LABORATORIAN->value) {
+        return view('dashboard.patient-dashboard');
+    } elseif (Auth::user()->role == Role::DOCTOR->value) {
+        return view('dashboard.doctor-dashboard');
+    } elseif (Auth::user()->role == Role::ADMIN->value) {
+        return view('dashboard.admin-dashboard');
+    } else {
+        return view('dashboard.patient-dashboard');
+    }
 })->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::get('laborant/dashboard', function () {
-    return view('laborant-dashboard');
-})->middleware(['auth', 'verified'])->name('laborant-dashboard');
-
-Route::get('doctor/dashboard', function () {
-    return view('doctor-dashboard');
-})->middleware(['auth', 'verified'])->name('doctor-dashboard');
 
 Route::get('/dashboard/create-doctor', function () {
     return view('admin.create-doctor');
@@ -36,7 +37,7 @@ Route::get('/patients', function () {
 })->name('patients');
 
 Route::get('/patient/{id}', function (string $id) {
-    $patient = User::where('id', $id)->where('role', \App\Models\Role::PATIENT)->firstOrFail();
+    $patient = User::where('id', $id)->where('role', Role::PATIENT)->firstOrFail();
 
     return view('patient.patient', compact('patient'));
 })->whereUlid('id');
@@ -50,7 +51,7 @@ Route::get('/doctor/create', function () {
 })->name('create-doctor');
 
 Route::get('/doctor/{id}', function (string $id) {
-    $doctor = User::where('id', $id)->where('role', \App\Models\Role::DOCTOR)->firstOrFail();
+    $doctor = User::where('id', $id)->where('role', Role::DOCTOR)->firstOrFail();
 
     return view('doctor.doctor', compact('doctor'));
 })->name('doctor');
@@ -60,15 +61,15 @@ Route::get('/laboratorians', function () {
 })->name('laboratorians');
 
 Route::get('/laboratorian/{id}', function (string $id) {
-    $laboratorian = User::where('id', $id)->where('role', \App\Models\Role::LABORATORIAN)->firstOrFail();
+    $laboratorian = User::where('id', $id)->where('role', Role::LABORATORIAN)->firstOrFail();
 
     return view('laboratorian.laboratorian', compact('laboratorian'));
 })->name('laboratorian');
 
 Route::get('/visit/{id}', function (string $id) {
-   $visit = Visit::where('id', $id)->with('doctor.user')->with('doctor.specialization')->with('patient.user')->firstOrFail();
+    $visit = Visit::where('id', $id)->with('doctor.user')->with('doctor.specialization')->with('patient.user')->firstOrFail();
 
-   return view('visit.visit', compact('visit'));
+    return view('visit.visit', compact('visit'));
 })->name('visit');
 
 Route::middleware('auth')->group(function () {
@@ -77,4 +78,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
