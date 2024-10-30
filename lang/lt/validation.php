@@ -173,9 +173,31 @@ return [
     */
 
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
+        'name' => [
+            'required' => 'Lauką „Vardas“ privaloma užpildyti.',
+            'string' => 'Laukas „Vardas“ gali būti sudarytas tik iš raidžių.',
+            'max' => 'Laukas „Vardas“ negali viršyti :max simbolių ribos.'
         ],
+        'email' => [
+            'required' => 'Lauką „Elektroninis paštas“ privaloma užpildyti.',
+            'string' => 'Laukas „Elektroninis paštas“ gali būti sudarytas tik iš raidžių.',
+            'max' => 'Laukas „Elektroninis paštas“ negali viršyti :max simbolių ribos.',
+            'lowercase' => 'Laukas „Elektroninis paštas“ turi būti užpildytas mažosiomis raidėmis.',
+            'email' => 'Pateiktas el. pašto adresas negalioja.',
+            'unique' => 'Pateiktas el. pašto adresas jau užimtas.'
+        ],
+        'phone_number' => [
+            'required' => 'Lauką „Telefono numeris“ privaloma užpildyti.',
+            'max' => 'Laukas „Telefono numeris“ negali viršyti :max simbolių ribos',
+            'regex' => "Telefono numeris pateiktas netinkamu formatu.",
+            'unique' => 'Pateiktas telefono numeris jau užimtas.'
+        ],
+        'password' => [
+            'required' => 'Lauką „Slaptažodis“ privaloma užpildyti.',
+            'confirmed' => 'Slaptažodžiai nesutampa.',
+            'current_password' => 'Slaptažodis neteisingas.',
+            'min' => 'Slaptažodis turi būti bent :min simbolių ilgio.'
+        ]
     ],
 
     /*

@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
@@ -26,20 +27,17 @@ class RegisteredUserController extends Controller
     /**
      * Handle an incoming registration request.
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:40'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'phone_number' => ['required', 'string', 'numeric', 'max:255'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ], [
-            'name.required' => __("Lauką „Vardas“ privaloma užpildyti"),
-            'name.string' => __("Laukas „Vardas“ gali būti sudarytas tik iš raidžių"),
-            'name.max' => __("Laukas „Vardas“ negali viršyti 40-ies simbolių ribos")
-        ]);
+                'name' => ['required', 'string', 'max:40'],
+                'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+                'phone_number' => ['required', 'regex:/^\+(?:[0-9] ?){9,12}[0-9]$|^([0-9]{10,12})$|^([0-9]{9})$|^0([0-9]{9})$/', 'unique:' . User::class],
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            ]
+        );
 
         $user = User::create([
             'name' => $request->name,

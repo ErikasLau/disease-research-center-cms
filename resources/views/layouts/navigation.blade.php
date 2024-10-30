@@ -50,8 +50,8 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
+                        <x-dropdown-link :href="route('profile.edit')" class="hover:bg-[#e7e7e7]">
+                            {{ __('Paskyra') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->
@@ -59,9 +59,10 @@
                             @csrf
 
                             <x-dropdown-link :href="route('logout')"
+                                             class="bg-[#f2f2f2] hover:bg-[#e7e7e7] border-t-2 border-gray-300"
                                              onclick="event.preventDefault();
                                                 this.closest('form').submit();">
-                                {{ __('Log Out') }}
+                                {{ __('Atsijungti') }}
                             </x-dropdown-link>
                         </form>
                     </x-slot>
