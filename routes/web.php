@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Examination;
 use App\Models\Role;
@@ -21,10 +22,6 @@ Route::get('/dashboard', function () {
         return view('dashboard.patient-dashboard');
     }
 })->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::get('/dashboard/create-doctor', function () {
-    return view('admin.create-doctor');
-});
 
 Route::get('/examination/{id}', function (string $id) {
     $examination = Examination::where('id', $id)->with('patient.user')->with('result')->firstOrFail();
@@ -48,7 +45,9 @@ Route::get('/doctors', function () {
 
 Route::get('/doctor/create', function () {
     return view('doctor.create-doctor');
-})->name('create-doctor');
+})->middleware(['auth', 'restrictRole:' . Role::ADMIN->value])->name('create-doctor');
+
+Route::post('/doctor', [DoctorController::class, 'store'])->name('doctor.store');
 
 Route::get('/doctor/{id}', function (string $id) {
     $doctor = User::where('id', $id)->where('role', Role::DOCTOR)->firstOrFail();

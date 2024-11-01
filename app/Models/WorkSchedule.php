@@ -16,7 +16,8 @@ class WorkSchedule extends Model
     protected $fillable = [
         'shift_start_time',
         'shift_end_time',
-        'frequency',
+        'shift_start_date',
+        'shift_end_date',
         'days_of_week',
     ];
 

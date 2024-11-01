@@ -3,7 +3,7 @@
     $doctors_count = Doctor::count();
     $laboratorians_count = User::where('role', Role::LABORATORIAN->value)->count();
     $admins_count = User::where('role', Role::ADMIN->value)->count();
-    $active_users = DB::table(config('session.table'))->whereNotNull('user_id')->count();
+    $active_users = DB::table(config('session.table'))->whereNotNull('user_id')->select('user_id')->distinct()->get()->count();
 
     $visits_count = Visit::count();
     $examinations_count = Examination::count();

@@ -1,6 +1,6 @@
 @php
     use App\Models\Role;use App\Models\User;use Illuminate\Support\Facades\Auth;
-    $users = User::where('role', Role::LABORATORIAN)->get()->except(Auth::id());
+    $users = User::where('role', Role::LABORATORIAN)->paginate(15);
 @endphp
 <x-app-layout>
     <x-slot name="header">
@@ -88,6 +88,9 @@
                                     </table>
                                 </div>
                             </div>
+                        </div>
+                        <div class="mt-3 p-3">
+                            {{ $users->links() }}
                         </div>
                     </div>
                 </div>

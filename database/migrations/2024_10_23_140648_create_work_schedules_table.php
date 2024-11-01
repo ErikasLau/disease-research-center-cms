@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Frequency;
 use App\Models\WeekDays;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -17,7 +16,8 @@ return new class extends Migration {
 
             $table->time('shift_start_time');
             $table->time('shift_end_time');
-            $table->enum('frequency', Frequency::getOptions())->default(Frequency::WEEKLY);
+            $table->date('shift_start_date');
+            $table->date('shift_end_date');
             $table->enum('days_of_week', WeekDays::getOptions());
 
             $table->foreignUlid('doctor_id')->nullable()->references('id')->on('doctors');

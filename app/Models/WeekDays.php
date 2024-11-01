@@ -16,4 +16,22 @@ enum WeekDays: int
     {
         return array_map(fn(WeekDays $case) => $case->value, WeekDays::cases());
     }
+
+    public static function values(): array
+    {
+        $translations = [
+            'MONDAY' => 'Pirmadienis',
+            'TUESDAY' => 'Antradienis',
+            'WEDNESDAY' => 'Trečiadienis',
+            'THURSDAY' => 'Ketvirtadienis',
+            'FRIDAY' => 'Penktadienis',
+            'SUNDAY' => 'Šeštadienis',
+            'SATURDAY' => 'Sekmadienis'
+        ];
+
+        return array_map(fn(WeekDays $case) => [
+            'name' => $translations[$case->name],
+            'value' => $case->value,
+        ], WeekDays::cases());
+    }
 }

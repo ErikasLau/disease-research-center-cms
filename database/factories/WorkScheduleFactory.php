@@ -22,7 +22,8 @@ class WorkScheduleFactory extends Factory
         return [
             'shift_start_time' => $this->faker->time(),
             'shift_end_time' => $this->faker->time(),
-            'frequency' => $this->faker->randomElement(Frequency::cases()),
+            'shift_start_date' => $this->faker->date(),
+            'shift_end_date' => $this->faker->date(),
             'days_of_week' => $this->faker->randomElement(WeekDay::cases()),
             'doctor_id' => null,
         ];
