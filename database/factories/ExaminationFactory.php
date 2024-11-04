@@ -24,7 +24,7 @@ class ExaminationFactory extends Factory
             'status' => array_rand(ExaminationStatus::getOptions()),
             'comment' => $this->faker->text(),
             'patient_id' => $this->faker->numberBetween(1, 10),
-            'result_id' => null,
+            'visit_id' => $this->faker->numberBetween(1, 10),
         ];
     }
 }

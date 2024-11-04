@@ -49,8 +49,8 @@ class DatabaseSeeder extends Seeder
         }
 
         $visits = Visit::factory()->count(5)->create(['doctor_id' => $doctors[0]->doctor->id, 'patient_id' => $patients[0]->patient->id]);
-        $examinations = Examination::factory()->count(5)->create(['patient_id' => $patients[0]->patient->id]);
-        $results = Result::factory()->count(5)->create(['examination_id' => $examinations[0]->id, 'user_id' => $laboratorians[0]->id]);
+        $examinations = Examination::factory()->count(5)->create(['patient_id' => $patients[0]->patient->id, 'visit_id' => $visits[0]->id]);
+        $results = Result::factory()->count(5)->create(['user_id' => $laboratorians[0]->id, 'examination_id' => $examinations[0]->id]);
         Comment::factory()->count(5)->create(['result_id' => $results[0]->id, 'doctor_id' => $doctors[0]->doctor->id]);
     }
 }

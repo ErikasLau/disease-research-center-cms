@@ -14,8 +14,8 @@ return new class extends Migration {
             $table->ulid('id')->primary();
             $table->string('excerpt');
 
-            $table->foreignUlid('examination_id')->references('id')->on('examinations');
             $table->foreignUlid('user_id')->references('id')->on('users');
+            $table->foreignUlid('examination_id')->references('id')->on('examinations');
 
             $table->timestamps();
         });

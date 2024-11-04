@@ -13,4 +13,16 @@ enum ExaminationStatus: int
     {
         return array_map(fn(ExaminationStatus $case) => $case->value, ExaminationStatus::cases());
     }
+
+    public static function values(): array
+    {
+        $translations = [
+            'NOT_COMPLETED' => 'Neįvykdytas',
+            'IN_PROGRESS' => 'Vykdomas',
+            'SENT_TO_CONFIRM' => 'Išsiųstas patvirtinti',
+            'AT_DOCTOR' => 'Pas gydytoją',
+        ];
+
+        return array_map(fn(ExaminationStatus $case) => $translations[$case->name], ExaminationStatus::cases());
+    }
 }

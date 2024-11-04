@@ -13,7 +13,7 @@ Route::redirect('/', '/login');
 
 Route::get('/dashboard', function () {
     if (Auth::user()->role == Role::LABORATORIAN->value) {
-        return view('dashboard.patient-dashboard');
+        return view('dashboard.laborant-dashboard');
     } elseif (Auth::user()->role == Role::DOCTOR->value) {
         return view('dashboard.doctor-dashboard');
     } elseif (Auth::user()->role == Role::ADMIN->value) {
@@ -24,7 +24,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/examination/{id}', function (string $id) {
-    $examination = Examination::where('id', $id)->with('patient.user')->with('result')->firstOrFail();
+    $examination = Examination::where('id', $id)->with('patient.user')->with('result')->with('visit.doctor.user')->firstOrFail();
 
     return view('examination.examination', compact('examination'));
 });

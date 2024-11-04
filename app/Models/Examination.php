@@ -30,5 +30,10 @@ class Examination extends Model
         return $this->belongsTo(Result::class);
     }
 
+    public function visit(): HasOne
+    {
+        return $this->hasOne(Visit::class, 'id', 'visit_id');
+    }
+
     public $timestamps = true;
 }

@@ -20,8 +20,8 @@ class ResultFactory extends Factory
         return [
             //
             'excerpt' => $this->faker->sentence(),
-            'examination_id' => $this->faker->numberBetween(1, 10),
             'user_id' => $this->faker->numberBetween(1, 10),
+            'examination_id' => $this->faker->numberBetween(1, 10),
         ];
     }
 }
