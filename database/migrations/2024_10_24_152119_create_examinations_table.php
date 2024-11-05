@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->ulid('id')->primary();
 
             $table->string('type');
-            $table->enum('status', ExaminationStatus::getOptions())->default(ExaminationStatus::NOT_COMPLETED);
+            $table->enum('status', ExaminationStatus::getOptions())->default(ExaminationStatus::NOT_COMPLETED->name);
             $table->string('comment');
 
             $table->foreignUlid('patient_id')->references('id')->on('patients');

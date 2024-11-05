@@ -8,6 +8,7 @@ use App\Models\Role;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -28,14 +29,8 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
-
-        $user = Auth::user();
-
-//        if($user->role == Role::PATIENT->value){
-//            return redirect()->intended(route('user-dashboard', absolute: false));
-//        } else {
-            return redirect()->intended(route('dashboard', absolute: false));
-//        }
+        
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**

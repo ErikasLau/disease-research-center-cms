@@ -12,11 +12,11 @@ use Illuminate\Support\Facades\Route;
 Route::redirect('/', '/login');
 
 Route::get('/dashboard', function () {
-    if (Auth::user()->role == Role::LABORATORIAN->value) {
+    if (Auth::user()->role == Role::LABORATORIAN->name) {
         return view('dashboard.laborant-dashboard');
-    } elseif (Auth::user()->role == Role::DOCTOR->value) {
+    } elseif (Auth::user()->role == Role::DOCTOR->name) {
         return view('dashboard.doctor-dashboard');
-    } elseif (Auth::user()->role == Role::ADMIN->value) {
+    } elseif (Auth::user()->role == Role::ADMIN->name) {
         return view('dashboard.admin-dashboard');
     } else {
         return view('dashboard.patient-dashboard');
@@ -34,7 +34,7 @@ Route::get('/patients', function () {
 })->name('patients');
 
 Route::get('/patient/{id}', function (string $id) {
-    $patient = User::where('id', $id)->where('role', Role::PATIENT)->firstOrFail();
+    $patient = User::where('id', $id)->where('role', Role::PATIENT->name)->firstOrFail();
 
     return view('patient.patient', compact('patient'));
 })->whereUlid('id');
@@ -45,12 +45,12 @@ Route::get('/doctors', function () {
 
 Route::get('/doctor/create', function () {
     return view('doctor.create-doctor');
-})->middleware(['auth', 'restrictRole:' . Role::ADMIN->value])->name('create-doctor');
+})->middleware(['auth', 'restrictRole:' . Role::ADMIN->name])->name('create-doctor');
 
 Route::post('/doctor', [DoctorController::class, 'store'])->name('doctor.store');
 
 Route::get('/doctor/{id}', function (string $id) {
-    $doctor = User::where('id', $id)->where('role', Role::DOCTOR)->firstOrFail();
+    $doctor = User::where('id', $id)->where('role', Role::DOCTOR->name)->firstOrFail();
 
     return view('doctor.doctor', compact('doctor'));
 })->name('doctor');

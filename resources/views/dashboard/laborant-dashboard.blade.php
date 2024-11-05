@@ -1,8 +1,8 @@
 @php
     use App\Models\Examination;use App\Models\ExaminationStatus;use App\Models\Role;use App\Models\User;use App\Models\Visit;use App\Models\VisitStatus;use Illuminate\Support\Facades\Auth;
-    $users = User::where('role', Role::DOCTOR)->get()->except(Auth::id());
+    $users = User::where('role', Role::DOCTOR->name)->get()->except(Auth::id());
     $completedVisits = Visit::with('doctor.user')->with('doctor.specialization')->get();
-    $createdVisits = Visit::with('doctor.user')->with('doctor.specialization')->where('status', VisitStatus::CREATED)->get();
+    $createdVisits = Visit::with('doctor.user')->with('doctor.specialization')->where('status', VisitStatus::CREATED->name)->get();
 
     $examinations = Examination::with('patient.user')->get()
 @endphp
@@ -92,7 +92,7 @@
                                                     {{ $examination->patient->user->name }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                                                    {{ ExaminationStatus::from($examination->status)->name }}
+                                                    {{ $examination->status }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                                                     {{ $examination->type }}

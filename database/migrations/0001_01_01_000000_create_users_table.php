@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->timestamp('email_verified_at')->nullable();
             $table->string('phone_number')->unique();
             $table->string('password');
-            $table->enum('role', Role::getOptions())->default(Role::PATIENT);
+            $table->enum('role', Role::getOptions())->default(Role::PATIENT->name);
             $table->rememberToken();
             $table->timestamps();
         });

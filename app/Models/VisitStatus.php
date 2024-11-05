@@ -11,7 +11,7 @@ enum VisitStatus: int
 
     public static function getOptions(): array
     {
-        return array_map(fn(VisitStatus $case) => $case->value, VisitStatus::cases());
+        return array_map(fn(VisitStatus $case) => $case->name, VisitStatus::cases());
     }
 
     public static function values(): array

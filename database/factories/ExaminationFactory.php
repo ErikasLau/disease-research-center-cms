@@ -21,7 +21,7 @@ class ExaminationFactory extends Factory
         return [
             //
             'type' => $this->faker->word(),
-            'status' => array_rand(ExaminationStatus::getOptions()),
+            'status' => $this->faker->randomElement(ExaminationStatus::getOptions()),
             'comment' => $this->faker->text(),
             'patient_id' => $this->faker->numberBetween(1, 10),
             'visit_id' => $this->faker->numberBetween(1, 10),

@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->ulid('id')->primary();
 
             $table->dateTime('visit_date');
-            $table->enum('status', VisitStatus::getOptions())->default(VisitStatus::CREATED);
+            $table->enum('status', VisitStatus::getOptions())->default(VisitStatus::CREATED->name);
 
             $table->foreignUlid('doctor_id')->references('id')->on('doctors');
             $table->foreignUlid('patient_id')->references('id')->on('patients');

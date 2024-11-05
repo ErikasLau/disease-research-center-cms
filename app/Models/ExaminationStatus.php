@@ -11,7 +11,7 @@ enum ExaminationStatus: int
 
     public static function getOptions(): array
     {
-        return array_map(fn(ExaminationStatus $case) => $case->value, ExaminationStatus::cases());
+        return array_map(fn(ExaminationStatus $case) => $case->name, ExaminationStatus::cases());
     }
 
     public static function values(): array

@@ -27,18 +27,18 @@ class DatabaseSeeder extends Seeder
             'name' => 'test',
             'email' => 'test@test.lt',
             'password' => 'test',
-            'role' => Role::ADMIN,
+            'role' => Role::ADMIN->name,
         ]);
 
-        $patients = User::factory()->count(20)->create(['role' => Role::PATIENT]);
+        $patients = User::factory()->count(20)->create(['role' => Role::PATIENT->name]);
 
         foreach ($patients as $patient) {
             Patient::factory()->create(['user_id' => $patient->id]);
         }
 
-        $laboratorians = User::factory()->count(20)->create(['role' => Role::LABORATORIAN]);
+        $laboratorians = User::factory()->count(20)->create(['role' => Role::LABORATORIAN->name]);
 
-        $doctors = User::factory()->count(20)->create(['role' => Role::DOCTOR]);
+        $doctors = User::factory()->count(20)->create(['role' => Role::DOCTOR->name]);
 
         foreach ($doctors as $doctor) {
             $doctorSpecialization = DoctorSpecialization::factory()->create();

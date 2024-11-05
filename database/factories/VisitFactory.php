@@ -21,7 +21,7 @@ class VisitFactory extends Factory
         return [
             //
             'visit_date' => $this->faker->dateTime(),
-            'status' => array_rand(VisitStatus::getOptions()),
+            'status' => $this->faker->randomElement(VisitStatus::getOptions()),
             'doctor_id' => $this->faker->numberBetween(1, 10),
             'patient_id' => $this->faker->numberBetween(1, 10),
         ];
