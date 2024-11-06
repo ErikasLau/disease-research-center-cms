@@ -1,6 +1,6 @@
 @php
     use App\Models\Role;use App\Models\User;use Illuminate\Support\Facades\Auth;
-    $users = User::where('role', Role::PATIENT)->paginate(15);
+    $users = User::where('role', Role::PATIENT->name)->paginate(15);
 @endphp
 <x-app-layout>
     <x-slot name="header">

@@ -34,5 +34,10 @@ class Visit extends Model
         return $this->belongsTo(Examination::class);
     }
 
+    public function doctorAppointmentSlot(): HasOne
+    {
+        return $this->HasOne(DoctorAppointmentSlot::class);
+    }
+
     public $timestamps = true;
 }

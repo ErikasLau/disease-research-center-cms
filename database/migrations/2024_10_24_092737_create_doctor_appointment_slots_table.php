@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\VisitStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,15 +10,14 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('visits', function (Blueprint $table) {
+        Schema::create('doctor_appointment_slots', function (Blueprint $table) {
             $table->ulid('id')->primary();
 
-            $table->dateTime('visit_date');
-            $table->enum('status', VisitStatus::getOptions())->default(VisitStatus::CREATED->name);
+            $table->dateTime('start_time');
+            $table->dateTime('end_time');
+            $table->boolean('is_available');
 
             $table->foreignUlid('doctor_id')->references('id')->on('doctors');
-            $table->foreignUlid('patient_id')->references('id')->on('patients');
-            $table->foreignUlid('doctor_appointment_slot_id')->references('id')->on('doctor_appointment_slots');
 
             $table->timestamps();
         });
@@ -30,6 +28,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('visits');
+        Schema::dropIfExists('doctor_appointment_slots');
     }
 };

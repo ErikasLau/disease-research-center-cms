@@ -1,11 +1,16 @@
 @php
-    use App\Models\Role;use App\Models\User;use App\Models\Visit;use App\Models\VisitStatus;use Illuminate\Support\Facades\Auth;
-    $users = User::where('role', Role::DOCTOR)->get()->except(Auth::id());
+    use App\Models\DoctorAppointmentSlot;use App\Models\Role;use App\Models\User;use App\Models\Visit;use App\Models\VisitStatus;use App\Models\WorkSchedule;use Illuminate\Support\Facades\Auth;use App\Services\ScheduleService;
+
+    $users = User::where('role', Role::DOCTOR->name)->with('doctor.specialization')->get()->except(Auth::id());
 
     $completedVisits = Visit::with('doctor.user')->with('doctor.specialization')->orderBy('visit_date', 'desc')->take(4)->get();
     $createdVisits = Visit::with('doctor.user')->with('doctor.specialization')->where('status', VisitStatus::CREATED)->orderBy('visit_date', 'desc')->take(4)->get();
-@endphp
 
+    function getNextTimeSlot(string $doctor_id){
+        $appointment = DoctorAppointmentSlot::where('doctor_id', $doctor_id)->where('start_time', '>=', date('Y-m-d H:i', strtotime('now')))->where('is_available', false)->orderBy('start_time', 'ASC')->first();
+        return $appointment ? $appointment->start_time : "Nėra galimų laikų";
+    }
+@endphp
 <x-app-layout xmlns="http://www.w3.org/1999/html">
     <div id="modal-backdrop" class="relative z-10 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
@@ -133,8 +138,8 @@
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                                                     {{$user->doctor->specialization->name }}
                                                 </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">2024-10-30
-                                                    08:00
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                                                    {{getNextTimeSlot($user->doctor->id)}}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-start text-sm font-medium">
                                                     <button type="button"

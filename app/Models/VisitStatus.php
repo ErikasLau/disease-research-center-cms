@@ -16,13 +16,6 @@ enum VisitStatus: int
 
     public static function values(): array
     {
-        $translations = [
-            'CREATED' => 'Sukurtas',
-            'COMPLETED' => 'Įvykdytas',
-            'NO_SHOW' => 'Nepasirodė',
-            'CANCELED' => 'Atšauktas',
-        ];
-
-        return array_map(fn(VisitStatus $case) => $translations[$case->name], VisitStatus::cases());
+        return array_map(fn(VisitStatus $case) => __('translations.' . $case->name), VisitStatus::cases());
     }
 }

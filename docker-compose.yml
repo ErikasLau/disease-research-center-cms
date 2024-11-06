@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+    web:
+        build:
+            context: .
+            dockerfile: Dockerfile  # Assuming your Dockerfile is in the root directory
+        ports:
+            - "80:80"  # Adjust the port if needed
+        volumes:
+            - .:/var/www/html
+        environment:
+            - DB_HOST=host.docker.internal
+        depends_on:
+            - db
+
+    db:
+        container_name: Laravel_Database  # Set a custom container name
+        image: mysql:latest               # Use the specified MySQL image
+        restart: unless-stopped            # Restart container on failures
+
+        environment:
+            MYSQL_ROOT_PASSWORD: securePassword123Root
+            MYSQL_DATABASE: laravel
+            MYSQL_USER: user
+            MYSQL_PASSWORD: password
+
+        volumes:
+            - ./data/database:/var/lib/mysql:delegated  # Persist data in a local directory
+
+        # **Security Warning:** Exposing ports directly to the host machine is not recommended for production environments. Consider using a reverse proxy or a secure access method.
+        ports:
+            # Commented out for security reasons. Uncomment if necessary, but use with caution.
+            - "3306:3306"
+
+        healthcheck:
+            test: ["CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized"]
+            interval: 10s
+            timeout: 10s
+            retries: 10
+
+    phpmyadmin:
+        container_name: Laravel_PhpMyAdmin  # Set a custom container name
+        image: phpmyadmin/phpmyadmin          # Use the official phpMyAdmin image
+        restart: unless-stopped             # Restart container on failures
+
+        environment:
+            PMA_HOST: db                        # Connect to the "db" service
+            PMA_USER: root                       # Use the root user for phpMyAdmin
+            PMA_PASSWORD: securePassword123Root  # Use the root password for phpMyAdmin (change to a strong password)
+
+        # **Security Warning:** Exposing ports directly to the host machine is not recommended for production environments. Consider using a reverse proxy or a secure access method.
+        ports:
+            # Commented out for security reasons. Uncomment if necessary, but use with caution.
+            - "8081:80"
+
+        depends_on:
+            - db  # Wait for the "db" service to start before starting phpMyAdmin

@@ -2,6 +2,8 @@
 node_modules
 resources/js
 resources/sass
+data
+DockerDatabase
 
 # will be created when building the image
 bootstrap/cache/*

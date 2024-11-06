@@ -29,6 +29,11 @@ class Doctor extends Model
         return $this->hasMany(WorkSchedule::class);
     }
 
+    public function doctorAppointmentSlots(): HasMany
+    {
+        return $this->hasMany(DoctorAppointmentSlot::class);
+    }
+
     public function specialization(): HasOne
     {
         return $this->HasOne(DoctorSpecialization::class, 'id', 'doctor_specialization_id');

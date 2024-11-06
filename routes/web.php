@@ -45,7 +45,8 @@ Route::get('/doctors', function () {
 
 Route::get('/doctor/create', function () {
     return view('doctor.create-doctor');
-})->middleware(['auth', 'restrictRole:' . Role::ADMIN->name])->name('create-doctor');
+})->name('create-doctor');
+//})->middleware(['auth', 'restrictRole:' . Role::ADMIN->name])->name('create-doctor');
 
 Route::post('/doctor', [DoctorController::class, 'store'])->name('doctor.store');
 

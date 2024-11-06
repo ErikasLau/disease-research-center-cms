@@ -1,7 +1,7 @@
 @php use App\Models\ExaminationStatus;use App\Models\VisitStatus; @endphp
 @php
     $visitStatus = VisitStatus::values();
-    $examinationStatus = ExaminationStatus::values()
+    $examinationStatus = ExaminationStatus::getOptions();
 @endphp
 
 <x-app-layout>
@@ -60,7 +60,7 @@
                         </p>
                         <p>
                             <span class="text-gray-700 text-sm font-semibold">Statusas:</span>
-                            {{$visitStatus[$examination->visit->status]}}
+                            {{__('page.visitStatus.' . $examination->visit->status)}}
                         </p>
                         <p>
                             <span class="text-gray-700 text-sm font-semibold">Gydytojo vardas ir pavardė:</span>
@@ -87,9 +87,15 @@
                             <span class="text-gray-700 text-sm font-semibold">Tyrimo tipas:</span>
                             {{$examination->type}}
                         </p>
-                        <p>
+                        <p class="flex flex-row items-center gap-2">
                             <span class="text-gray-700 text-sm font-semibold">Tyrimo statusas:</span>
-                            {{$examinationStatus[$examination->status]}}
+                            <select id="specialization" name="specialization"
+                                    class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block">
+                                @foreach($examinationStatus as $status)
+                                    <option
+                                        value="{{$status}}" {{ $status === $examination->status ? 'selected' : '' }}>{{ __('page.examinationStatus.' . $status) }}</option>
+                                @endforeach
+                            </select>
                         </p>
                         <p>
                             <span class="text-gray-700 text-sm font-semibold">Tyrimo komentaras:</span>
@@ -102,7 +108,8 @@
                 <div class="p-6 text-gray-900">
                     <div class="border-b-2 border-gray-300 pb-2 mb-4">
                         <h2 class="text-xl uppercase font-semibold leading-7 text-gray-900">Tyrimų rezultatai</h2>
-                        <p class="text-sm">Atlikti tyrimo rezultatai, kurie bus siunčiami tyrimą vizito metu paskyrusiam gydytojui.</p>
+                        <p class="text-sm">Atlikti tyrimo rezultatai, kurie bus siunčiami tyrimą vizito metu paskyrusiam
+                            gydytojui.</p>
                     </div>
                     <div class="px-8">
                         <form action="">
