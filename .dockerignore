@@ -1,7 +1,5 @@
 .git
 node_modules
-resources/js
-resources/sass
 data
 DockerDatabase
 
@@ -15,3 +13,8 @@ storage/logs
 storage/framework/cache/data
 storage/framework/sessions/*
 storage/framework/testing
+
+# Don't use files we use for deployment
+.env
+Dockerfile
+docker-compose.yml

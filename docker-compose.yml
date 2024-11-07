@@ -7,10 +7,13 @@ services:
             dockerfile: Dockerfile  # Assuming your Dockerfile is in the root directory
         ports:
             - "80:80"  # Adjust the port if needed
-        volumes:
-            - .:/var/www/html
+        #volumes:
+        #    - .:/var/www/html
+        env_file: ".env"
         environment:
-            - DB_HOST=host.docker.internal
+            - DB_HOST=mysql
+        links:
+            - "db:mysql" # duomenu baze 'db' turetu buti pasiekiama per IP=mysql:3306
         depends_on:
             - db
 

@@ -1,37 +1,62 @@
-# Use PHP with Apache as the base image
+# Build step for the frontend using Vite
+FROM node:latest AS vite-builder
+
+WORKDIR /tmp/project
+
+# Copy over and install dependencies
+COPY package.json /tmp/project/
+COPY package-lock.json /tmp/project/
+RUN npm install
+
+# Copy the rest of the files over
+COPY . /tmp/project
+
+# Build it
+RUN npm run build
+
+
+
+# The website itself
 FROM php:8.3-apache
 
-# Install Additional System Dependencies
-RUN apt-get update && apt-get install -y \
-    libzip-dev \
-    zip
+# Install required zip development package
+RUN apt-get update
+RUN apt-get install libzip-dev -y
 
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+# Grab composer binary from a composer image
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
-# Enable Apache mod_rewrite for URL rewriting
-RUN a2enmod rewrite
-
-# Install PHP extensions
+# Install mysqli extension
 RUN docker-php-ext-install pdo_mysql zip
 
-# Configure Apache DocumentRoot to point to Laravel's public directory
-# and update Apache configuration files
+# Allow the use of .htaccess for rewrites
+RUN a2enmod rewrite
+
+# Change document root to /var/www/html/public as opposed to /var/www/html
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# Copy the application code
-COPY . /var/www/html
-
-# Set the working directory
 WORKDIR /var/www/html
 
-# Install composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Copy all the files
+COPY . /var/www/html
 
-# Install project dependencies
+# Install dependencies
 RUN composer install
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Copy built public content from vite-builder step
+COPY --from=vite-builder /tmp/project/public/build public/build
+
+# Run database seed
+RUN php artisan
+
+# Remove html directory by default and symlink the public one
+# not needed if changing document root
+#RUN rm -r html
+#RUN ln -s public html
+
+# Update permissions
+RUN chown -R www-data:www-data /var/www/html
+
+CMD ["apache2-foreground"]
