@@ -1,9 +1,9 @@
 @php
     use App\Models\Examination;use App\Models\ExaminationStatus;use App\Models\Role;use App\Models\User;use App\Models\Visit;use App\Models\VisitStatus;use Illuminate\Support\Facades\Auth;
     $users = User::where('role', Role::DOCTOR)->get()->except(Auth::id());
-    $visits = Visit::with('doctor.user')->with('doctor.specialization')->orderBy('visit_date', 'desc')->get();
 
-    $examinations = Examination::where('status', ExaminationStatus::SENT_TO_CONFIRM)->with('patient.user')->get()
+    $visits = Visit::orderBy('visit_date', 'desc')->take(8)->get();
+    $examinations = Examination::where('status', ExaminationStatus::SENT_TO_CONFIRM->name)->orderBy('created_at', 'desc')->get()
 @endphp
 
 <x-app-layout xmlns="http://www.w3.org/1999/html">
@@ -19,7 +19,7 @@
                 <div class="p-6 text-gray-900">
                     <div>
                         <div class="border-b-2 border-gray-300 pb-2 mb-4">
-                            <h2 class="text-xl uppercase font-semibold leading-7 text-gray-900">Pacientų Vizitai</h2>
+                            <h2 class="text-xl uppercase font-semibold leading-7 text-gray-900">Artimiausi pacientų vizitai</h2>
                         </div>
                         <div class="flex flex-col">
                         </div>
@@ -54,10 +54,10 @@
                                                     {{ $visit->patient->user->name }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                                                    {{ VisitStatus::from($visit->status)->name }}
+                                                    {{ __('page.visitStatus.' . $visit->status) }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                                                    {{$visit->visit_date}}
+                                                    {{date('Y-m-d H:i', strtotime($visit->visit_date))}}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-start text-sm font-medium">
                                                     <a type="button"
@@ -72,6 +72,13 @@
                                         </tbody>
                                     </table>
                                 </div>
+                                <div class="text-right mt-2">
+                                    <a href="/visits">
+                                        <x-primary-button>
+                                            Visi vizitai
+                                        </x-primary-button>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -83,7 +90,7 @@
                 <div class="p-6 text-gray-900">
                     <div>
                         <div class="border-b-2 border-gray-300 pb-2 mb-4">
-                            <h2 class="text-xl uppercase font-semibold leading-7 text-gray-900">Pacientų tyrimai</h2>
+                            <h2 class="text-xl uppercase font-semibold leading-7 text-gray-900">Pacientų tyrimai atsiųsti patvirtinti</h2>
                         </div>
                         <div class="flex flex-col">
                         </div>
@@ -122,7 +129,7 @@
                                                     {{ $examination->patient->user->name }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                                                    {{ ExaminationStatus::from($examination->status)->name }}
+                                                    {{ __('page.examinationStatus.' . $examination->status) }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                                                     {{ $examination->type }}
@@ -142,6 +149,13 @@
                                         @endforeach
                                         </tbody>
                                     </table>
+                                </div>
+                                <div class="text-right mt-2">
+                                    <a href="/examinations">
+                                        <x-primary-button>
+                                            Visi tyrimai
+                                        </x-primary-button>
+                                    </a>
                                 </div>
                             </div>
                         </div>

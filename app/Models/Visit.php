@@ -31,12 +31,12 @@ class Visit extends Model
 
     public function examination(): BelongsTo
     {
-        return $this->belongsTo(Examination::class);
+        return $this->belongsTo(Examination::class, 'id', 'visit_id');
     }
 
     public function doctorAppointmentSlot(): HasOne
     {
-        return $this->HasOne(DoctorAppointmentSlot::class);
+        return $this->HasOne(DoctorAppointmentSlot::class, 'id', 'doctor_appointment_slot_id');
     }
 
     public $timestamps = true;

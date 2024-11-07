@@ -19,9 +19,9 @@ class Doctor extends Model
         'license_number',
     ];
 
-    public function user(): BelongsTo
+    public function user(): HasOne
     {
-        return $this->belongsTo(User::class);
+        return $this->HasOne(User::class, 'id', 'user_id');
     }
 
     public function workSchedules(): HasMany

@@ -26,12 +26,38 @@ Route::get('/dashboard', function () {
 Route::get('/examination/{id}', function (string $id) {
     $examination = Examination::where('id', $id)->with('patient.user')->with('result')->with('visit.doctor.user')->firstOrFail();
 
-    return view('examination.examination', compact('examination'));
+    if(Auth::user()->role == Role::LABORATORIAN->name){
+        return view('examination.examination', compact('examination'));
+    } else if (Auth::user()->role == Role::DOCTOR->name) {
+        return view('examination.examination-doctor', compact('examination'));
+    }
+
+    //RETURN
 });
+
+Route::get('/visits', function () {
+    return view('visit.visits');
+})->name('visits');
+
+Route::get('/examinations', function () {
+    return view('examination.examinations');
+})->name('examinations');
 
 Route::get('/patients', function () {
     return view('patient.patients');
 })->name('patients');
+
+Route::get('patient/treatment-history', function () {
+    return view('patient.treatment-history');
+})->name('treatment-history');
+
+Route::get('patient/treatment-history/visits', function () {
+    return view('patient.treatment-history-visits');
+})->name('treatment-history-visits');
+
+Route::get('patient/treatment-history/examinations', function () {
+    return view('patient.treatment-history-examinations');
+})->name('treatment-history-examinations');
 
 Route::get('/patient/{id}', function (string $id) {
     $patient = User::where('id', $id)->where('role', Role::PATIENT->name)->firstOrFail();
@@ -40,21 +66,28 @@ Route::get('/patient/{id}', function (string $id) {
 })->whereUlid('id');
 
 Route::get('/doctors', function () {
+    if (Auth::user()->role == Role::PATIENT->name) {
+        return view('doctor.doctors-patients');
+    }
+
     return view('doctor.doctors');
 })->name('doctors');
 
 Route::get('/doctor/create', function () {
     return view('doctor.create-doctor');
-})->name('create-doctor');
-//})->middleware(['auth', 'restrictRole:' . Role::ADMIN->name])->name('create-doctor');
+})->middleware(['auth', 'restrictRole:' . Role::ADMIN->name])->name('create-doctor');
 
 Route::post('/doctor', [DoctorController::class, 'store'])->name('doctor.store');
 
 Route::get('/doctor/{id}', function (string $id) {
-    $doctor = User::where('id', $id)->where('role', Role::DOCTOR->name)->firstOrFail();
+    $doctor = User::where('id', $id)->where('role', Role::DOCTOR->name)->fist();
 
     return view('doctor.doctor', compact('doctor'));
 })->name('doctor');
+
+Route::get('/doctor/{id}/visit', function (string $id) {
+    return view('visit.create-visit', compact('id'));
+})->name('create-visit');
 
 Route::get('/laboratorians', function () {
     return view('laboratorian.laboratorians');
@@ -67,7 +100,7 @@ Route::get('/laboratorian/{id}', function (string $id) {
 })->name('laboratorian');
 
 Route::get('/visit/{id}', function (string $id) {
-    $visit = Visit::where('id', $id)->with('doctor.user')->with('doctor.specialization')->with('patient.user')->firstOrFail();
+    $visit = Visit::where('id', $id)->with('doctor.user')->with('doctor.specialization')->with('patient.user')->with('examination.result')->firstOrFail();
 
     return view('visit.visit', compact('visit'));
 })->name('visit');

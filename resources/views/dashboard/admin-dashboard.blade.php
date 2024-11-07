@@ -1,8 +1,8 @@
 @php
     use App\Models\Doctor;use App\Models\Examination;use App\Models\Patient;use App\Models\Result;use App\Models\Role;use App\Models\User;use App\Models\Visit;use Illuminate\Support\Facades\DB;$patients_count = Patient::count();
     $doctors_count = Doctor::count();
-    $laboratorians_count = User::where('role', Role::LABORATORIAN->value)->count();
-    $admins_count = User::where('role', Role::ADMIN->value)->count();
+    $laboratorians_count = User::where('role', Role::LABORATORIAN->name)->count();
+    $admins_count = User::where('role', Role::ADMIN->name)->count();
 
     $visits_count = Visit::count();
     $examinations_count = Examination::count();

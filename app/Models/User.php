@@ -6,6 +6,7 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -54,13 +55,13 @@ class User extends Authenticatable
         ];
     }
 
-    public function doctor(): HasOne
+    public function doctor(): BelongsTo
     {
-        return $this->hasOne(Doctor::class);
+        return $this->BelongsTo(Doctor::class, 'id', 'user_id');
     }
 
-    public function patient(): HasOne
+    public function patient(): BelongsTo
     {
-        return $this->hasOne(Patient::class);
+        return $this->BelongsTo(Patient::class, 'id', 'user_id');
     }
 }

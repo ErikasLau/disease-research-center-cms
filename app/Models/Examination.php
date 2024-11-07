@@ -27,7 +27,7 @@ class Examination extends Model
 
     public function result(): BelongsTo
     {
-        return $this->belongsTo(Result::class);
+        return $this->belongsTo(Result::class, 'id', 'examination_id');
     }
 
     public function visit(): HasOne

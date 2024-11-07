@@ -20,9 +20,9 @@ class DoctorAppointmentSlot extends Model
         'is_available'
     ];
 
-    public function doctors(): HasOne
+    public function doctor(): HasOne
     {
-        return $this->HasOne(Doctor::class);
+        return $this->HasOne(Doctor::class, 'id', 'doctor_id');
     }
 
     public function visit(): BelongsTo

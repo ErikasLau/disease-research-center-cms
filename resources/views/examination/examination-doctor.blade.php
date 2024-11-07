@@ -7,7 +7,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Valdymo skydas') }}
+            {{ __('Tyrimo informacija') }}
         </h2>
     </x-slot>
 
@@ -128,7 +128,28 @@
                         </div>
                     </div>
                 </div>
-                @if($examination->result->comment)
+                @if(!$examination->result->comment)
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-4">
+                        <div class="p-6 text-gray-900">
+                            <div class="border-b-2 border-gray-300 pb-2 mb-4">
+                                <h2 class="text-xl uppercase font-semibold leading-7 text-gray-900">Gydytojo rezultatų
+                                    komentaras</h2>
+                            </div>
+                            <div class="px-8">
+                                <form action="">
+                                    <x-input-label for="results" class="text-gray-700 text-sm font-semibold">
+                                        Komentaras
+                                    </x-input-label>
+                                    <x-textarea-input id="results" class="w-full min-h-40"
+                                                      placeholder="Gydytojo komentaras apie tyrimo rezultatus"/>
+                                    <div class="text-right mt-3">
+                                        <x-primary-button>Palikti komentarą</x-primary-button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                @else
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-4">
                         <div class="p-6 text-gray-900">
                             <div class="border-b-2 border-gray-300 pb-2 mb-4">
@@ -149,28 +170,6 @@
                         </div>
                     </div>
                 @endif
-            @else
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-4">
-                    <div class="p-6 text-gray-900">
-                        <div class="border-b-2 border-gray-300 pb-2 mb-4">
-                            <h2 class="text-xl uppercase font-semibold leading-7 text-gray-900">Tyrimų rezultatai</h2>
-                            <p class="text-sm">Atlikti tyrimo rezultatai, kurie bus siunčiami tyrimą vizito metu paskyrusiam
-                                gydytojui.</p>
-                        </div>
-                        <div class="px-8">
-                            <form action="">
-                                <x-input-label for="results" class="text-gray-700 text-sm font-semibold">
-                                    Rezultatai
-                                </x-input-label>
-                                <x-textarea-input id="results" class="w-full min-h-40"
-                                                  placeholder="Tyrimo rezultatai, kurie bus siunčiami gydytojui"/>
-                                <div class="text-right mt-3">
-                                    <x-primary-button>Pateikti rezultatus</x-primary-button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
             @endif
         </div>
     </div>

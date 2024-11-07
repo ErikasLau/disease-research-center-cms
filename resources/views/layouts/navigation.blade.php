@@ -16,7 +16,25 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Valdymo skydas') }}
                     </x-nav-link>
-                    @if(Auth::user()->role != Role::PATIENT->value)
+                    @if(Auth::user()->role == Role::PATIENT->name)
+                        <x-nav-link :href="route('doctors')" :active="request()->routeIs('doctors')">
+                            {{ __('Visi gydytojai') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('treatment-history')" :active="request()->routeIs('treatment-history')">
+                            {{ __('Gydimo istorija') }}
+                        </x-nav-link>
+                    @elseif(Auth::user()->role == Role::DOCTOR->name)
+                        <x-nav-link :href="route('visits')" :active="request()->routeIs('visits')">
+                            {{ __('Visi vizitai') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('examinations')" :active="request()->routeIs('examinations')">
+                            {{ __('Visi tyrimai') }}
+                        </x-nav-link>
+                    @elseif(Auth::user()->role == Role::LABORATORIAN->name)
+                        <x-nav-link :href="route('examinations')" :active="request()->routeIs('examinations')">
+                            {{ __('Visi tyrimai') }}
+                        </x-nav-link>
+                    @elseif(Auth::user()->role == Role::ADMIN->name)
                         <x-nav-link :href="route('patients')" :active="request()->routeIs('patients')">
                             {{ __('Pacientai') }}
                         </x-nav-link>

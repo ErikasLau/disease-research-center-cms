@@ -1,29 +1,19 @@
 @php
-    use App\Models\Examination;use App\Models\ExaminationStatus;use App\Models\Role;use App\Models\User;use App\Models\Visit;use App\Models\VisitStatus;use Illuminate\Support\Facades\Auth;
-    $users = User::where('role', Role::DOCTOR->name)->get()->except(Auth::id());
-    $completedVisits = Visit::with('doctor.user')->with('doctor.specialization')->get();
-    $createdVisits = Visit::with('doctor.user')->with('doctor.specialization')->where('status', VisitStatus::CREATED->name)->get();
-
-    $examinations = Examination::with('patient.user')->get()
+    use App\Models\Examination;use App\Models\Role;use App\Models\User;use Illuminate\Support\Facades\Auth;
+    $examinations = Examination::orderBy('created_at', 'DESC')->paginate(15);
 @endphp
-
-<x-app-layout xmlns="http://www.w3.org/1999/html">
+<x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Valdymo skydas') }}
+            {{ __('Mano tyrimai') }}
         </h2>
     </x-slot>
 
-    <div class="py-12 max-w-7xl mx-auto">
-        <div class="max-w-7xl sm:px-6 lg:px-8">
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <div>
-                        <div class="border-b-2 border-gray-300 pb-2 mb-4">
-                            <h2 class="text-xl uppercase font-semibold leading-7 text-gray-900">Pacientų tyrimai</h2>
-                        </div>
-                        <div class="flex flex-col">
-                        </div>
+                    <div class="flex flex-col">
                         <div class="-m-1.5 overflow-x-auto">
                             <div class="p-1.5 min-w-full inline-block align-middle">
                                 <div class="overflow-hidden">
@@ -32,11 +22,7 @@
                                         <tr>
                                             <th scope="col"
                                                 class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                                                Pacientas
-                                            </th>
-                                            <th scope="col"
-                                                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                                                Statusas
+                                                Gydytojas
                                             </th>
                                             <th scope="col"
                                                 class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
@@ -44,7 +30,15 @@
                                             </th>
                                             <th scope="col"
                                                 class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                                                Sukūrimo laikas
+                                                Tyrimo sukūrimo data
+                                            </th>
+                                            <th scope="col"
+                                                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                                Statusas
+                                            </th>
+                                            <th scope="col"
+                                                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                                Turi rezultatus
                                             </th>
                                             <th scope="col"
                                                 class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
@@ -56,21 +50,24 @@
                                         @foreach ($examinations as $examination)
                                             <tr class="hover:bg-gray-100">
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                                                    {{ $examination->patient->user->name }}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                                                    {{ __('page.examinationStatus.' . $examination->status) }}
+                                                    {{ $examination->visit->doctor->user->name }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                                                     {{ $examination->type }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                                                    {{$examination->created_at}}
+                                                    {{ date('Y-m-d H:i', strtotime($examination->created_at)) }}
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                                                    {{ __('page.examinationStatus.' . $examination->status) }}
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                                                    {{ $examination->result ? "Turi" : "Neturi" }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-start text-sm font-medium">
-                                                    <a type="button"
-                                                       href="/examination/{{$examination->id}}"
-                                                       class="inline-flex items-center text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none"
+                                                    <a
+                                                        href="/visit/{{$examination->visit->id}}"
+                                                        class="inline-flex items-center text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none"
                                                     >
                                                         Peržiūrėti
                                                     </a>
@@ -80,14 +77,10 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <div class="text-right mt-2">
-                                    <a href="/examinations">
-                                        <x-primary-button>
-                                            Visi tyrimai
-                                        </x-primary-button>
-                                    </a>
-                                </div>
                             </div>
+                        </div>
+                        <div class="mt-3 p-3">
+                            {{ $examinations->links() }}
                         </div>
                     </div>
                 </div>

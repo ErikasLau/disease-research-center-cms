@@ -25,12 +25,12 @@ class Result extends Model
 
     public function user(): HasOne
     {
-        return $this->hasOne(User::class);
+        return $this->hasOne(User::class, 'id', 'user_id');
     }
 
     public function comment(): BelongsTo
     {
-        return $this->BelongsTo(Comment::class);
+        return $this->BelongsTo(Comment::class, 'id', 'result_id');
     }
 
     public $timestamps = true;
