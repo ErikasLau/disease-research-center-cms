@@ -20,26 +20,55 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <div>
-                        Patients count: {{$patients_count}}
-                    </div>
-                    <div>
-                        Doctors count: {{$doctors_count}}
-                    </div>
-                    <div>
-                        Laboratorians count: {{$laboratorians_count}}
-                    </div>
-                    <div>
-                        Admins count: {{$admins_count}}
-                    </div>
-                    <div>
-                        Visits count: {{$visits_count}}
-                    </div>
-                    <div>
-                        Examinations count: {{$examinations_count}}
-                    </div>
-                    <div>
-                        Results count: {{$results_count}}
+                    <div class="grid grid-cols-4 gap-4">
+                        <x-admin-info-block>
+                            <x-slot name="count">
+                                {{$patients_count}}
+                            </x-slot>
+                                Pacientai
+                        </x-admin-info-block>
+
+                        <x-admin-info-block>
+                            <x-slot name="count">
+                                {{$doctors_count}}
+                            </x-slot>
+                            Gydytojai
+                        </x-admin-info-block>
+
+                        <x-admin-info-block>
+                            <x-slot name="count">
+                                {{$laboratorians_count}}
+                            </x-slot>
+                            Laborantai
+                        </x-admin-info-block>
+
+                        <x-admin-info-block>
+                            <x-slot name="count">
+                                {{$admins_count}}
+                            </x-slot>
+                            Administratoriai
+                        </x-admin-info-block>
+
+                        <x-admin-info-block>
+                            <x-slot name="count">
+                                {{$visits_count}}
+                            </x-slot>
+                            Vizitai
+                        </x-admin-info-block>
+
+                        <x-admin-info-block>
+                            <x-slot name="count">
+                                {{$examinations_count}}
+                            </x-slot>
+                            Tyrimai
+                        </x-admin-info-block>
+
+                        <x-admin-info-block>
+                            <x-slot name="count">
+                                {{$results_count}}
+                            </x-slot>
+                            Rezultatai
+                        </x-admin-info-block>
                     </div>
                 </div>
             </div>

@@ -1,5 +1,5 @@
 @php
-    use App\Models\VisitStatus;
+    use App\Models\VisitStatus;use Illuminate\Support\Facades\Auth;
     $visitStatus = VisitStatus::getOptions();
     $visitStatusToChange = [VisitStatus::CREATED->name, VisitStatus::CANCELED->name]
 @endphp
@@ -60,6 +60,46 @@
                     </div>
                 </div>
             </div>
+
+            @if(Auth::user()->role == \App\Models\Role::DOCTOR->name && !$visit->examination && !($visit->status == VisitStatus::CANCELED->name || $visit->status == VisitStatus::NO_SHOW->name))
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-4">
+                    <div class="p-6 text-gray-900">
+                        <div class="border-b-2 border-gray-300 pb-2 mb-4">
+                            <h2 class="text-xl uppercase font-semibold leading-7 text-gray-900">Tyrimo paskyrimas</h2>
+                        </div>
+                        <div class="flex flex-col gap-3">
+                            <div>
+                                <x-input-label for="examination_type" value="{{ __('Tyrimo tipas') }}"/>
+                                <x-text-input
+                                    id="examination_type"
+                                    name="examination type"
+                                    type="text"
+                                    class="mt-1 block w-full"
+                                    placeholder="{{ __('Tyrimo tipas') }}"
+                                />
+                                <x-input-error :messages="$errors->examinationCreation->get('examination_type')"
+                                               class="mt-2"/>
+                            </div>
+                            <div>
+                                <x-input-label for="examination_comment" value="{{ __('Tyrimo komentaras') }}"/>
+                                <x-textarea-input
+                                    id="examination_comment"
+                                    name="examination comment"
+                                    type="text"
+                                    class="mt-1 block w-full"
+                                    placeholder="{{ __('Tyrimo komentaras') }}"
+                                />
+                            </div>
+                            <div class="col-span-full text-right">
+                                <button type="submit"
+                                        class="rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                                    Paskirti tyrimą
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
 
             @if($visit->examination)
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-4">

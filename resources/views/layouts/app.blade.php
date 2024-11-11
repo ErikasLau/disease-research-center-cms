@@ -36,6 +36,15 @@
     <main>
         {{ $slot }}
     </main>
+
 </div>
+<footer class="text-center py-3 bg-white">
+    <p>
+        Projektas: <strong>„Ligų tyrimų centras“</strong>
+    </p>
+    <p>
+        Atliko: <strong>Erikas Laužadis</strong>, IFF-2/6
+    </p>
+</footer>
 </body>
 </html>

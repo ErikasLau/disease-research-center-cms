@@ -2,7 +2,7 @@
 
 return [
     'visitStatus' => [
-        'CREATED' => "Sukurtas",
+        'CREATED' => "Registruotas",
         'COMPLETED' => "Įvykdytas",
         'NO_SHOW' => "Nepasirodė",
         'CANCELED'=> "Atšauktas"

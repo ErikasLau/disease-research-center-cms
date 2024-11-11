@@ -1,5 +1,5 @@
 # Build step for the frontend using Vite
-FROM node:latest AS vite-builder
+FROM node:23-bullseye AS vite-builder
 
 WORKDIR /tmp/project
 
@@ -17,7 +17,7 @@ RUN npm run build
 
 
 # The website itself
-FROM php:8.3-apache
+FROM php:8.3-apache-bullseye
 
 # Install required zip development package
 RUN apt-get update
