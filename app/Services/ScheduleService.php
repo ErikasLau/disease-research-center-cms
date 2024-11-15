@@ -82,7 +82,7 @@ class ScheduleService
 
         foreach ($workingDays as $workingDay) {
             foreach ($timeSlots as $timeSlot) {
-                $results[] = new DoctorAppointmentSlot(['start_time' => $workingDay . " " . $timeSlot['start'], 'end_time' => $workingDay . " " . $timeSlot['end'], 'is_available' => false, 'doctor_id' => $doctor_id]);
+                $results[] = new DoctorAppointmentSlot(['start_time' => $workingDay . " " . $timeSlot['start'], 'end_time' => $workingDay . " " . $timeSlot['end'], 'is_available' => true, 'doctor_id' => $doctor_id]);
             }
         }
 

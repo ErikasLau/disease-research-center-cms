@@ -3,7 +3,7 @@
         $nextTime = DB::table('doctor_appointment_slots')
                 ->select(DB::raw('MIN(start_time) as start_time'), 'doctor_id')
                 ->where('doctor_appointment_slots.start_time', '>=', date('Y-m-d H:i', strtotime('now')))
-                ->where('doctor_appointment_slots.is_available', false)
+                ->where('doctor_appointment_slots.is_available', true)
                 ->groupBy('doctor_appointment_slots.doctor_id');
 
     $users = DB::table('users')

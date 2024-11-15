@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Frequency;
 use App\Models\WeekDays;
 use App\Models\WorkSchedule;
+use Carbon\Carbon;
 use Carbon\WeekDay;
 use DateTime;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -21,11 +22,15 @@ class WorkScheduleFactory extends Factory
      */
     public function definition(): array
     {
+        $currDate = new DateTime();
+        $shiftStartTime = Carbon::parse($this->faker->time());
+        $shiftEndTime = $shiftStartTime->copy()->addHours(7)->lt(Carbon::parse('24:00')) ? $shiftStartTime->copy()->addHours(7)->format('H:i') : '23:59';
+
         return [
-            'shift_start_time' => $this->faker->time(),
-            'shift_end_time' => $this->faker->time(),
-            'shift_start_date' => $this->faker->date(),
-            'shift_end_date' => (new DateTime())->modify('+2 weeks')->format('Y-m-d'),
+            'shift_start_time' => $shiftStartTime,
+            'shift_end_time' => $shiftEndTime,
+            'shift_start_date' => $currDate,
+            'shift_end_date' => $currDate->modify('+4 weeks')->format('Y-m-d'),
             'days_of_week' => $this->faker->randomElement(WeekDays::getOptions()),
             'doctor_id' => null,
         ];

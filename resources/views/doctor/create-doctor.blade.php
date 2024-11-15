@@ -4,6 +4,7 @@
     $weekDays = WeekDays::values();
 
     $date = new DateTime("now", new DateTimeZone('Europe/Vilnius'));
+    $oldSpecialization = old('specialization');
 @endphp
 
 <script>
@@ -71,46 +72,7 @@
     </x-slot>
 
     <x-modal name="add_new_specialization" focusable>
-        <form action="/specialization" method="post" class="p-6">
-            @csrf
-
-            <h2 class="text-lg font-medium text-gray-900">
-                {{ __('Sukurkite naują gydytojo specializaciją') }}
-            </h2>
-
-            <p class="mt-1 text-sm text-gray-600">
-                {{ __('Naujoji gydytojo specializacija, pridėjus, atsiras sąraše specializacijų sukuriant gydytoją.') }}
-            </p>
-
-            <div class="mt-6">
-                <x-input-label for="new_specialization" value="{{ __('Nauja gydytojo specializacija') }}"/>
-
-                <x-text-input
-                    id="new_specialization"
-                    name="new specialization"
-                    type="text"
-                    class="mt-1 block w-full"
-                    placeholder="{{ __('Specializacija') }}"
-                />
-
-                <x-input-error :messages="$errors->userDeletion->get('password')" class="mt-2"/>
-            </div>
-
-            <div class="mt-6 flex justify-end gap-3">
-                <button
-                    x-on:click.prevent="$dispatch('close')"
-                    class="rounded-md text-white bg-gray-400 px-3 py-2 text-sm font-semibold shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    type="button">
-                    Atšaukti
-                </button>
-                <button
-                    x-on:click.prevent="$dispatch('close')"
-                    class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    type="button">
-                    Pridėti naują specialybę
-                </button>
-            </div>
-        </form>
+        <livewire:doctor-specialization-post/>
     </x-modal>
 
     <div class="py-12">
@@ -129,27 +91,29 @@
 
                             <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                                 <div class="sm:col-span-3">
-                                    <x-input-label for="name" value="{{ __('Vardas') }}"/>
+                                    <x-input-label for="name" value="{{ __('Vardas ir pavardė') }}"/>
                                     <x-text-input
                                         id="name"
                                         name="name"
                                         type="text"
                                         class="mt-1 block w-full"
-                                        placeholder="{{ __('Vardas') }}"
+                                        value="{{ old('name') }}"
+                                        placeholder="{{ __('Vardas ir pavardė') }}"
                                     />
-                                    <x-input-error :messages="$errors->doctorCreation->get('name')" class="mt-2"/>
+                                    <x-input-error :messages="$errors->get('name')" class="mt-2"/>
                                 </div>
 
                                 <div class="sm:col-span-3">
-                                    <x-input-label for="last_name" value="{{ __('Pavardė') }}"/>
+                                    <x-input-label for="birth_date" value="{{ __('Gimimo data') }}"/>
                                     <x-text-input
-                                        id="last_name"
-                                        name="last name"
-                                        type="text"
+                                        id="birth_date"
+                                        name="birth date"
+                                        type="date"
                                         class="mt-1 block w-full"
-                                        placeholder="{{ __('Pavardė') }}"
+                                        value="{{ old('birth_date') }}"
+                                        placeholder="{{ __('Gimimo data') }}"
                                     />
-                                    <x-input-error :messages="$errors->doctorCreation->get('last_name')" class="mt-2"/>
+                                    <x-input-error :messages="$errors->get('birth_date')" class="mt-2"/>
                                 </div>
 
                                 <div class="sm:col-span-3">
@@ -159,9 +123,10 @@
                                         name="email"
                                         type="email"
                                         class="mt-1 block w-full"
+                                        value="{{ old('email') }}"
                                         placeholder="{{ __('Elektroninio pašto adresas') }}"
                                     />
-                                    <x-input-error :messages="$errors->doctorCreation->get('email')" class="mt-2"/>
+                                    <x-input-error :messages="$errors->get('email')" class="mt-2"/>
                                 </div>
 
                                 <div class="sm:col-span-3">
@@ -171,28 +136,24 @@
                                         name="phone number"
                                         type="tel"
                                         class="mt-1 block w-full"
+                                        value="{{ old('phone_number') }}"
                                         placeholder="{{ __('Telefono numeris') }}"
                                     />
-                                    <x-input-error :messages="$errors->doctorCreation->get('phone_number')"
+                                    <x-input-error :messages="$errors->get('phone_number')"
                                                    class="mt-2"/>
                                 </div>
 
                                 <div class="sm:col-span-3">
                                     <x-input-label for="specialization" value="{{ __('Gydytojo specializacija') }}"/>
-                                    <select id="specialization" name="specialization"
-                                            class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full">
-                                        @foreach($specializations as $specialization)
-                                            <option>{{$specialization->name}}</option>
-                                        @endforeach
-                                    </select>
-                                    <x-input-error :messages="$errors->doctorCreation->get('specialization')"
-                                                   class="mt-2"/>
-                                    <button x-data=""
-                                            x-on:click.prevent="$dispatch('open-modal', 'add_new_specialization')"
-                                            type="button"
-                                            class="mt-1 text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline">
-                                        Pridėti naują specializaciją?
-                                    </button>
+                                    <livewire:specialization-list :selectedSpecialization="$oldSpecialization">
+                                        <x-input-error :messages="$errors->get('specialization')"
+                                                       class="mt-2"/>
+                                        <button x-data=""
+                                                x-on:click.prevent="$dispatch('open-modal', 'add_new_specialization')"
+                                                type="button"
+                                                class="mt-1 text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline">
+                                            Pridėti naują specializaciją?
+                                        </button>
                                 </div>
 
                                 <div class="sm:col-span-3">
@@ -202,9 +163,10 @@
                                         name="licence"
                                         type="text"
                                         class="mt-1 block w-full"
+                                        value="{{ old('licence') }}"
                                         placeholder="{{ __('Gydytojo licencijos numeris') }}"
                                     />
-                                    <x-input-error :messages="$errors->doctorCreation->get('licence')" class="mt-2"/>
+                                    <x-input-error :messages="$errors->get('licence')" class="mt-2"/>
                                 </div>
 
                                 <div class="sm:col-span-3" x-data="{ show: false }">
@@ -240,27 +202,28 @@
                                             </svg>
                                         </button>
                                     </div>
-                                    <x-input-error :messages="$errors->doctorCreation->get('password')" class="mt-2"/>
+                                    <x-input-error :messages="$errors->get('password')" class="mt-2"/>
                                 </div>
 
                                 <div class="sm:col-span-3">
-                                    <x-input-label for="repeated-password" value="{{ __('Pakartoti slaptažodį') }}"/>
+                                    <x-input-label for="password_confirmation"
+                                                   value="{{ __('Pakartoti slaptažodį') }}"/>
                                     <x-text-input
-                                        id="repeated-password"
-                                        name="repeated password"
+                                        id="password_confirmation"
+                                        name="password confirmation"
                                         type="password"
                                         autocomplete="off"
                                         class="mt-1 block w-full"
                                         placeholder="{{ __('Pakartoti slaptažodį') }}"
                                     />
-                                    <x-input-error :messages="$errors->doctorCreation->get('repeated-password')"
+                                    <x-input-error :messages="$errors->get('repeated-password')"
                                                    class="mt-2"/>
                                 </div>
 
                                 <div class="col-span-full text-right">
                                     <button
                                         class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                                        onclick="{const password = generateRandomPassword(12, true, true, true, true); document.getElementById('password').value = password; document.getElementById('repeated-password').value = password;}"
+                                        onclick="{const password = generateRandomPassword(12, true, true, true, true); document.getElementById('password').value = password; document.getElementById('password_confirmation').value = password;}"
                                         type="button">
                                         Generuoti slaptažodį
                                     </button>
@@ -269,7 +232,7 @@
                         </div>
 
                         <div class="border-b border-gray-900/10 pb-12"
-                             x-data="{ timetables: [], shift_start_time: @js($date->format('H:i')), shift_end_time: @js(date('H:i', strtotime($date->format('H:i'). ' + 8 hour'))), job_start_date: @js($date->format('Y-m-d')), job_end_date: @js(date('Y-m-d', strtotime($date->format('Y-m-d'). ' + 1 days'))), week_days: [], possible_week_days_array: @js($weekDays) }">
+                             x-data="{ timetables: @js(old('timetables') ?? []), shift_start_time: @js($date->format('H:i')), shift_end_time: @js(date('H:i', strtotime($date->format('H:i'). ' + 8 hour'))), job_start_date: @js($date->format('Y-m-d')), job_end_date: @js(date('Y-m-d', strtotime($date->format('Y-m-d'). ' + 1 days'))), week_days: [], possible_week_days_array: @js($weekDays) }">
                             <h2 class="text-base font-semibold leading-7 text-gray-900">Darbo laiko tvarkaraštis</h2>
                             <p class="mt-1 text-sm leading-6 text-gray-600">Sudarykite gydytojo darbo laiko tvarkaraštį
                                 pasirinkdami darbo dienas, laiką bei laikotarpį.</p>
@@ -338,6 +301,11 @@
                                     </div>
                                 </template>
                             </div>
+                            <x-input-error :messages="$errors->get('timetables')" class="mt-2"/>
+
+                            @error('timetables.*')
+                                <x-input-error :messages="$message" class="mt-2"/>
+                            @enderror
 
                             <div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-6">
                                 <div class="col-span-full grid sm:grid-cols-2 grid-cols-1 gap-x-6 gap-y-2 ">
@@ -350,8 +318,6 @@
                                             class="mt-1 block w-full"
                                             x-model="shift_start_time"
                                         />
-                                        <x-input-error :messages="$errors->doctorCreation->get('shift_start_time')"
-                                                       class="mt-2"/>
                                     </div>
 
                                     <div class="sm:col-span-1">
@@ -363,8 +329,6 @@
                                             class="mt-1 block w-full"
                                             x-model="shift_end_time"
                                         />
-                                        <x-input-error :messages="$errors->doctorCreation->get('shift_end_time')"
-                                                       class="mt-2"/>
                                     </div>
                                     <div class="col-span-full font-light text-sm"
                                          x-show="shift_start_time && shift_end_time">
@@ -385,8 +349,6 @@
                                             x-model="job_start_date"
                                             class="mt-1 block w-full"
                                         />
-                                        <x-input-error :messages="$errors->doctorCreation->get('job_start_date')"
-                                                       class="mt-2"/>
                                     </div>
 
                                     <div class="sm:col-span-1">
@@ -399,8 +361,6 @@
                                             x-model="job_end_date"
                                             class="mt-1 block w-full"
                                         />
-                                        <x-input-error :messages="$errors->doctorCreation->get('job_start_date')"
-                                                       class="mt-2"/>
                                     </div>
 
                                     <div class="col-span-full font-light text-sm"
@@ -419,7 +379,8 @@
                                                 <input id="bordered-radio-{{$weekDay['value']}}" type="checkbox"
                                                        value="{{$weekDay['value']}}" name="bordered-radio"
                                                        x-model="week_days"
-                                                       class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                                       class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                >
                                                 <label for="bordered-radio-{{$weekDay['value']}}"
                                                        class="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{$weekDay['name']}}</label>
                                             </div>

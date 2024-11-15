@@ -17,6 +17,9 @@ class Visit extends Model
     protected $fillable = [
         'visit_date',
         'status',
+        'doctor_id',
+        'patient_id',
+        'doctor_appointment_slot_id'
     ];
 
     public function doctor(): HasOne

@@ -12,6 +12,7 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet"/>
 
     <!-- Scripts -->
+    @livewireStyles
     @vite('resources/css/app.css')
     @vite(['resources/js/app.js'])
 
@@ -46,5 +47,7 @@
         Atliko: <strong>Erikas Laužadis</strong>, IFF-2/6
     </p>
 </footer>
+
+@livewireScriptConfig
 </body>
 </html>

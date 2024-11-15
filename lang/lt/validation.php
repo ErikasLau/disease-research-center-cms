@@ -187,7 +187,7 @@ return [
         ],
         'phone_number' => [
             'required' => 'Lauką „Telefono numeris“ privaloma užpildyti.',
-            'max' => 'Laukas „Telefono numeris“ negali viršyti :max simbolių ribos',
+            'max' => 'Laukas „Telefono numeris“ negali viršyti :max simbolių ribos.',
             'regex' => "Telefono numeris pateiktas netinkamu formatu.",
             'unique' => 'Pateiktas telefono numeris jau užimtas.'
         ],
@@ -196,6 +196,54 @@ return [
             'confirmed' => 'Slaptažodžiai nesutampa.',
             'current_password' => 'Slaptažodis neteisingas.',
             'min' => 'Slaptažodis turi būti bent :min simbolių ilgio.'
+        ],
+        'specialization_name' => [
+            'required' => 'Lauką „Specializacija“ privaloma užpildyti.',
+            'min' => 'Laukas „Specializacija“ privalo būti bent :min simbolių ilgio.',
+            'max' => 'Laukas „Specializacija“ negali viršyti :max simbolių ribos.',
+            'unique' => 'Pateikta specializacija jau yra užregistruota.'
+        ],
+        'specialization_description' => [
+            'required' => 'Lauką „Specializacijos aprašymas“ privaloma užpildyti.',
+            'min' => 'Laukas „Specializacijos aprašymas“ privalo būti bent :min simbolių ilgio.',
+        ],
+        'birth_date' => [
+            'required' => 'Lauką „Gimimo data“ privaloma užpildyti.',
+            'date' => 'Pateikta gimimo data neatitinka formato.',
+            'before_or_equal' => 'Registruoti galima tik pilnametį asmenį.'
+        ],
+        'licence' => [
+            'required' => 'Lauką „Licencija“ privaloma užpildyti.',
+            'max' => 'Laukas „Licencija“ negali viršyti :max simbolių ribos.',
+        ],
+        'specialization' => [
+            'required' => 'Lauką „Specilizacija“ privaloma užpildyti.',
+        ],
+        'timetables' => [
+            'required' => 'Privaloma nustatyti gydytojo darbo laiką.',
+            'array' => 'Darbo laiko įvestis turi būti sąrašo tipo.'
+        ],
+        'timetables.*.shift_start_time' => [
+            'required' => 'Prašome nurodyti darbo laiko pradžią.',
+            'string' => 'Darbo laiko pradžia turi būti tekstinio formato.',
+            'regex' => 'Neteisingas darbo laiko pradžios formatas.',
+        ],
+        'timetables.*.shift_end_time' => [
+            'required' => 'Prašome nurodyti darbo laiko pabaigą.',
+            'string' => 'Darbo laiko pabaiga turi būti tekstinio formato.',
+            'regex' => 'Neteisingas darbo laiko pabaigos formatas.',
+        ],
+        'timetables.*.job_start_date' => [
+            'required' => 'Prašome nurodyti darbo pradžios datą.',
+            'date' => 'Įvesta data nėra teisinga.',
+        ],
+        'timetables.*.job_end_date' => [
+            'required' => 'Prašome nurodyti darbo pabaigos datą.',
+            'date' => 'Įvesta data nėra teisinga.',
+        ],
+        'timetables.*.week_days' => [
+            'required' => 'Prašome pasirinkti darbo dienas.',
+            'array' => 'Darbo dienų pasirinkimas neteisingas.',
         ]
     ],
 

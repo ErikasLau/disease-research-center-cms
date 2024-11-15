@@ -1,6 +1,7 @@
 @php
     use App\Models\Role;use App\Models\User;use Illuminate\Support\Facades\Auth;
-    $users = User::where('role', Role::DOCTOR->name)->with('doctor.specialization')->paginate(15);
+
+    $doctors = \App\Models\Doctor::orderBy('created_at', 'DESC')->paginate(15);
 @endphp
 <x-app-layout>
     <x-slot name="header">
@@ -32,11 +33,11 @@
                                             </th>
                                             <th scope="col"
                                                 class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                                                Specializacija
+                                                Licencijos numeris
                                             </th>
                                             <th scope="col"
                                                 class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                                                Sekantis darbo laikas
+                                                Specializacija
                                             </th>
                                             <th scope="col"
                                                 class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
@@ -45,18 +46,18 @@
                                         </tr>
                                         </thead>
                                         <tbody class="divide-y divide-gray-200">
-                                        @foreach ($users as $user)
+                                        @foreach ($doctors as $doctor)
                                             <tr class="hover:bg-gray-100">
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                                                    <a href="/doctor/{{$user->id}}">
-                                                        {{ $user->name }}
+                                                    <a href="/doctor/{{$doctor->user->id}}">
+                                                        {{ $doctor->user->name }}
                                                     </a>
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                                                    {{$user->doctor->specialization->name}}
+                                                    {{$doctor->licence_number}}
                                                 </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">2024-10-30
-                                                    08:00
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                                                    {{$doctor->specialization->name}}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-start text-sm font-medium">
                                                     <button type="button"
@@ -76,7 +77,7 @@
                             </div>
                         </div>
                         <div class="mt-3 p-3">
-                            {{ $users->links() }}
+                            {{ $doctors->links() }}
                         </div>
                     </div>
                 </div>

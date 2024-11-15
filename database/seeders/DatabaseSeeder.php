@@ -26,12 +26,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
+        $user = User::factory()->create([
             'name' => 'test',
             'email' => 'test@test.lt',
             'password' => 'test',
             'role' => Role::ADMIN->name,
         ]);
+
+        Patient::factory()->create([
+            'user_id' => $user->id
+        ]);
+
+        $doctorSpecialization = DoctorSpecialization::factory()->create();
+        Doctor::factory()->create(['user_id' => $user->id, 'doctor_specialization_id' => $doctorSpecialization->id]);
 
         $patients = User::factory()->count(20)->create(['role' => Role::PATIENT->name]);
 

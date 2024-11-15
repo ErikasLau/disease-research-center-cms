@@ -19,7 +19,7 @@ class DoctorFactory extends Factory
     {
         return [
             //
-            'license_number' => str_pad($this->faker->randomNumber(9), 9, 'LM', STR_PAD_LEFT),
+            'licence_number' => str_pad($this->faker->randomNumber(9), 9, 'LM', STR_PAD_LEFT),
             'user_id' => $this->faker->numberBetween(1, 10),
             'doctor_specialization_id' => null,
         ];

@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('doctors', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->string('license_number');
+            $table->string('licence_number');
 
             $table->foreignUlid('user_id')->references('id')->on('users');
             $table->foreignUlid('doctor_specialization_id')->references('id')->on('doctor_specializations');

@@ -4,15 +4,10 @@
     $completedVisits = Visit::with('doctor.user')->with('doctor.specialization')->orderBy('visit_date', 'desc')->take(4)->get();
     $createdVisits = Visit::with('doctor.user')->with('doctor.specialization')->where('status', VisitStatus::CREATED)->orderBy('visit_date', 'desc')->take(4)->get();
 
-    function getNextTimeSlot(string $doctor_id){
-        $appointment = DoctorAppointmentSlot::where('doctor_id', $doctor_id)->where('start_time', '>=', date('Y-m-d H:i', strtotime('now')))->where('is_available', false)->orderBy('start_time', 'ASC')->first();
-        return $appointment ? $appointment->start_time : "Nėra galimų laikų";
-    }
-
     $nextTime = DB::table('doctor_appointment_slots')
                 ->select(DB::raw('MIN(start_time) as start_time'), 'doctor_id')
                 ->where('doctor_appointment_slots.start_time', '>=', date('Y-m-d H:i', strtotime('now')))
-                ->where('doctor_appointment_slots.is_available', false)
+                ->where('doctor_appointment_slots.is_available', true)
                 ->groupBy('doctor_appointment_slots.doctor_id');
 
     $users = DB::table('users')
