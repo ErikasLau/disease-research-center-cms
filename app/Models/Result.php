@@ -20,7 +20,7 @@ class Result extends Model
 
     public function examination(): HasOne
     {
-        return $this->hasOne(Examination::class);
+        return $this->hasOne(Examination::class, 'id', 'examination_id');
     }
 
     public function user(): HasOne

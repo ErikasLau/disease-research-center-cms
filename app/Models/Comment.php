@@ -15,6 +15,8 @@ class Comment extends Model
 
     protected $fillable = [
         'text',
+        'result_id',
+        'doctor_id'
     ];
 
     public function result(): HasOne

@@ -19,7 +19,7 @@ return new class extends Migration {
 
             $table->foreignUlid('doctor_id')->references('id')->on('doctors');
             $table->foreignUlid('patient_id')->references('id')->on('patients');
-            $table->foreignUlid('doctor_appointment_slot_id')->references('id')->on('doctor_appointment_slots');
+            $table->foreignUlid('doctor_appointment_slot_id')->nullable()->references('id')->on('doctor_appointment_slots');
 
             $table->timestamps();
         });

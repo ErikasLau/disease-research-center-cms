@@ -1,8 +1,9 @@
 @php
-    use App\Models\DoctorAppointmentSlot;use App\Models\Role;use App\Models\User;use App\Models\Visit;use App\Models\VisitStatus;use App\Models\WorkSchedule;use Illuminate\Database\Query\JoinClause;use Illuminate\Support\Facades\Auth;use App\Services\ScheduleService;use Illuminate\Support\Facades\DB;
+    use App\Models\DoctorAppointmentSlot;use App\Models\Patient;use App\Models\Role;use App\Models\User;use App\Models\Visit;use App\Models\VisitStatus;use App\Models\WorkSchedule;use Illuminate\Database\Query\JoinClause;use Illuminate\Support\Facades\Auth;use App\Services\ScheduleService;use Illuminate\Support\Facades\DB;
 
-    $completedVisits = Visit::with('doctor.user')->with('doctor.specialization')->orderBy('visit_date', 'desc')->take(4)->get();
-    $createdVisits = Visit::with('doctor.user')->with('doctor.specialization')->where('status', VisitStatus::CREATED)->orderBy('visit_date', 'desc')->take(4)->get();
+    $patient = Patient::where('user_id', Auth::id())->first();
+    $completedVisits = Visit::where('visit_date', '<', date('Y-m-d', strtotime('now')))->orderBy('visit_date', 'desc')->take(4)->get();
+    $createdVisits = Visit::where('patient_id', $patient->id)->where('visit_date', '>=', date('Y-m-d', strtotime('now')))->where('status', VisitStatus::CREATED->name)->orderBy('visit_date', 'ASC')->take(4)->get();
 
     $nextTime = DB::table('doctor_appointment_slots')
                 ->select(DB::raw('MIN(start_time) as start_time'), 'doctor_id')
@@ -24,7 +25,7 @@
         })
         ->orderBy('next_time.start_time', 'ASC')
         ->take(8)
-        ->get()
+        ->get();
 @endphp
 <x-app-layout xmlns="http://www.w3.org/1999/html">
     <x-slot name="header">
@@ -41,10 +42,10 @@
                         <div class="border-b-2 border-gray-300 pb-2 mb-4">
                             <h2 class="text-xl uppercase font-semibold leading-7 text-gray-900">Būsimi vizitai</h2>
                         </div>
-                        @if($completedVisits)
+                        @if(count($createdVisits) > 0)
                             <div
                                 class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-                                @foreach($completedVisits as $visit)
+                                @foreach($createdVisits as $visit)
                                     <x-visit-info-block :visit="$visit"/>
                                 @endforeach
                             </div>
@@ -58,7 +59,7 @@
                         <div class="border-b-2 border-gray-300 pb-2 mb-4">
                             <h2 class="text-xl uppercase font-semibold leading-7 text-gray-900">Praėję vizitai</h2>
                         </div>
-                        @if($completedVisits)
+                        @if(count($completedVisits) > 0)
                             <div
                                 class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
                                 @foreach($completedVisits as $visit)
@@ -82,76 +83,76 @@
             </div>
         </div>
         @if($users)
-        <div class="max-w-7xl sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <div>
-                        <div class="border-b-2 border-gray-300 pb-2 mb-4">
-                            <h2 class="text-xl uppercase font-semibold leading-7 text-gray-900">Registracija pas
-                                gydytojus</h2>
-                        </div>
-                        <div class="-m-1.5 overflow-x-auto">
-                            <div class="p-1.5 min-w-full inline-block align-middle">
-                                <div class="overflow-hidden">
-                                    <table class="min-w-full divide-y divide-gray-200">
-                                        <thead>
-                                        <tr>
-                                            <th scope="col"
-                                                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                                                Gydytojas
-                                            </th>
-                                            <th scope="col"
-                                                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                                                Specializacija
-                                            </th>
-                                            <th scope="col"
-                                                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                                                Artimiausias laikas
-                                            </th>
-                                            <th scope="col"
-                                                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                                                Veiksmai
-                                            </th>
-                                        </tr>
-                                        </thead>
-                                        <tbody class="divide-y divide-gray-200">
-                                        @foreach ($users as $user)
-                                            <tr class="hover:bg-gray-100">
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                                                    {{ $user->name }}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                                                    {{$user->specialization_name }}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                                                    {{ date('Y-m-d H:i', strtotime($user->start_time))}}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-start text-sm font-medium">
-                                                    <a
-                                                        href="/doctor/{{$user->doctor_id}}/visit"
-                                                        class="inline-flex items-center text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none"
-                                                    >
-                                                        Peržiūrėti laikus
-                                                    </a>
-                                                </td>
+            <div class="max-w-7xl sm:px-6 lg:px-8">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 text-gray-900">
+                        <div>
+                            <div class="border-b-2 border-gray-300 pb-2 mb-4">
+                                <h2 class="text-xl uppercase font-semibold leading-7 text-gray-900">Registracija pas
+                                    gydytojus</h2>
+                            </div>
+                            <div class="-m-1.5 overflow-x-auto">
+                                <div class="p-1.5 min-w-full inline-block align-middle">
+                                    <div class="overflow-hidden">
+                                        <table class="min-w-full divide-y divide-gray-200">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col"
+                                                    class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                                    Gydytojas
+                                                </th>
+                                                <th scope="col"
+                                                    class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                                    Specializacija
+                                                </th>
+                                                <th scope="col"
+                                                    class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                                    Artimiausias laikas
+                                                </th>
+                                                <th scope="col"
+                                                    class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                                    Veiksmai
+                                                </th>
                                             </tr>
-                                        @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="text-right mt-3">
-                                    <a href="/doctors">
-                                        <x-primary-button>
-                                            Visi gydytojai
-                                        </x-primary-button>
-                                    </a>
+                                            </thead>
+                                            <tbody class="divide-y divide-gray-200">
+                                            @foreach ($users as $user)
+                                                <tr class="hover:bg-gray-100">
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                                                        {{ $user->name }}
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                                                        {{$user->specialization_name }}
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                                                        {{ date('Y-m-d H:i', strtotime($user->start_time))}}
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-start text-sm font-medium">
+                                                        <a
+                                                            href="/doctor/{{$user->doctor_id}}/visit"
+                                                            class="inline-flex items-center text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none"
+                                                        >
+                                                            Peržiūrėti laikus
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="text-right mt-3">
+                                        <a href="/doctors">
+                                            <x-primary-button>
+                                                Visi gydytojai
+                                            </x-primary-button>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
         @endif
     </div>
 </x-app-layout>

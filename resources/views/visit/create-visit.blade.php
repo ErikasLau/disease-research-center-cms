@@ -30,20 +30,20 @@
 
                         @if($errors->any())
                             <div class="m-4 mx-6 p-6 bg-gray-100 rounded-md">
-                            @foreach($errors->all() as $error)
-                                <x-input-error :messages="$error" />
-                            @endforeach
+                                @foreach($errors->all() as $error)
+                                    <x-input-error :messages="$error"/>
+                                @endforeach
                             </div>
                         @endif
 
                         <div x-data="app()" x-init="[initDate(), getNoOfDays()]" x-cloak
-                             class="grid md:grid-cols-5 gap-4">
+                             class="grid grid-cols-1 lg:grid-cols-5 gap-4">
                             <div class="container mx-auto px-4 py-2 col-span-2">
-                                <div class="bg-white rounded-lg shadow overflow-hidden">
+                                <div class="bg-white rounded-lg overflow-hidden border-2 border-gray-300">
                                     <div class="flex items-center justify-between py-2 px-6">
                                         <div>
-                                        <span x-text="MONTH_NAMES[month]"
-                                              class="text-lg font-bold text-gray-800"></span>
+                                            <span x-text="MONTH_NAMES[month]"
+                                                  class="text-lg font-bold text-gray-800"></span>
                                             <span x-text="year" class="ml-1 text-lg text-gray-600 font-normal"></span>
                                         </div>
                                         <div class="border rounded-lg px-1" style="padding-top: 2px;">
@@ -97,12 +97,12 @@
                                             </template>
                                             <template x-for="(date, dateIndex) in no_of_days" :key="dateIndex">
                                                 <div style="width: 14.28%; height: 60px"
-                                                     class="px-4 pt-2 border-r border-b relative">
+                                                     class="p-2 border-r border-b flex items-center justify-center">
                                                     <div
                                                         @click="isAppointmentAvailable(date) ? selectAppointmentDay(date) : ''"
                                                         x-text="date"
-                                                        class="inline-flex w-6 h-6 items-center justify-center text-center leading-none rounded-full transition ease-in-out duration-100"
-                                                        :class="{'bg-blue-500 text-white cursor-pointer': isAppointmentAvailable(date) == true, 'text-gray-400': isEarlierThanToday(date) == true || isAppointmentAvailable(date) == false }"
+                                                        class="inline-flex items-center w-[36px] h-[36px] justify-center text-center leading-none rounded-full transition ease-in-out duration-100"
+                                                        :class="{'bg-blue-500 text-white cursor-pointer': isAppointmentAvailable(date) == true, 'text-gray-500': isEarlierThanToday(date) == true || isAppointmentAvailable(date) == false }"
                                                     ></div>
                                                 </div>
                                             </template>
@@ -240,7 +240,7 @@
                     const today = new Date();
                     const d = new Date(this.year, this.month, date);
 
-                    return today.toDateString() === d.toDateString() ? true : false;
+                    return today.toDateString() === d.toDateString();
                 },
 
                 isEarlierThanToday(date) {
@@ -263,7 +263,6 @@
 
                 selectAppointmentDay(date) {
                     this.selectedDayAppointments = this.filterAppointments(new Date(this.year, this.month, date, 12))
-                    console.log(this.selectedDayAppointments)
                 },
 
                 openModal(id, text) {
@@ -277,14 +276,14 @@
                     // find where to start calendar day of week
                     let dayOfWeek = new Date(this.year, this.month).getDay();
                     dayOfWeek = dayOfWeek === 0 ? 7 : dayOfWeek
-                    console.log(dayOfWeek)
+
                     let blankdaysArray = [];
-                    for (var i = 1; i < dayOfWeek; i++) {
+                    for (let i = 1; i < dayOfWeek; i++) {
                         blankdaysArray.push(i);
                     }
 
                     let daysArray = [];
-                    for (var i = 1; i <= daysInMonth; i++) {
+                    for (let i = 1; i <= daysInMonth; i++) {
                         daysArray.push(i);
                     }
 

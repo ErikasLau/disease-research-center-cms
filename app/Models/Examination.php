@@ -17,7 +17,9 @@ class Examination extends Model
     protected $fillable = [
         'type',
         'status',
-        'comment'
+        'comment',
+        'patient_id',
+        'visit_id'
     ];
 
     public function patient(): HasOne

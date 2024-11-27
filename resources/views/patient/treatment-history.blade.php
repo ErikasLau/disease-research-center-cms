@@ -23,14 +23,7 @@
                         <div
                             class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
                             @foreach($visits as $visit)
-                                <a href="/visit/{{$visit->id}}" class="group bg-gray-100 rounded p-4">
-                                    <h3 class="text-lg font-medium text-gray-900">{{$visit->doctor->user->name}}</h3>
-                                    <p class="text-sm text-gray-600">{{$visit->doctor->specialization->name}}</p>
-                                    <div class="flex flex-col">
-                                        <span class="text-lg font-medium text-gray-900">{{$visit->visit_date}}</span>
-                                        <span class="text-sm font-light text-gray-600">Vizito laikas</span>
-                                    </div>
-                                </a>
+                                <x-visit-info-block :visit="$visit"/>
                             @endforeach
                         </div>
                         <div class="text-right mt-2">

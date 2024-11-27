@@ -18,6 +18,7 @@
         ->leftJoinSub($nextTime, 'next_time', function (JoinClause $join) {
             $join->on('doctor_id', '=', 'doctors.id');
         })
+        ->orderBy('specialization_name', 'ASC')
         ->paginate(15);
 @endphp
 <x-app-layout>

@@ -244,6 +244,16 @@ return [
         'timetables.*.week_days' => [
             'required' => 'Prašome pasirinkti darbo dienas.',
             'array' => 'Darbo dienų pasirinkimas neteisingas.',
+        ],
+        'examination_type' => [
+            'required' => 'Laukas „Tyrimo tipas“ yra privalomas.',
+            'min' => 'Laukas „Tyrimo tipas“ privalo būti bent :min simbolių ilgio.',
+            'max' => 'Laukas „Tyrimo tipas“ negali viršyti :max simbolių ribos.',
+        ],
+        'examination_comment' => [
+            'required' => 'Laukas „Tyrimo komentaras“ yra privalomas.',
+            'min' => 'Laukas „Tyrimo komentaras“ privalo būti bent :min simbolių ilgio.',
+            'max' => 'Laukas „Tyrimo komentaras“ negali viršyti :max simbolių ribos.',
         ]
     ],
 
