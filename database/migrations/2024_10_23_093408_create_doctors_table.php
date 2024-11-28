@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->foreignUlid('doctor_specialization_id')->references('id')->on('doctor_specializations');
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
