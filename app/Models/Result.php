@@ -16,6 +16,8 @@ class Result extends Model
 
     protected $fillable = [
         'excerpt',
+        'user_id',
+        'examination_id'
     ];
 
     public function examination(): HasOne

@@ -9,13 +9,13 @@
 
 <script>
     function generateRandomPassword(length, includeUppercase, includeLowercase, includeNumbers, includeSpecialChars) {
-        const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
-        const numberChars = '0123456789';
-        const specialChars = '!@#$%^&*()-=_+[]{}|;:,.<>?/';
+        const uppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const lowercaseChars = "abcdefghijklmnopqrstuvwxyz";
+        const numberChars = "0123456789";
+        const specialChars = "!@#$%^&*()-=_+[]{}|;:,.<>?/";
 
-        let allChars = '';
-        let password = '';
+        let allChars = "";
+        let password = "";
 
         if (includeUppercase) allChars += uppercaseChars;
         if (includeLowercase) allChars += lowercaseChars;
@@ -33,7 +33,7 @@
     }
 
     function parseTime(s) {
-        var c = s.split(':');
+        var c = s.split(":");
         return parseInt(c[0]) * 60 + parseInt(c[1]);
     }
 
@@ -51,10 +51,10 @@
 
     function getDiffDate(start_date, end_date) {
         const start = new Date(start_date);
-        const end = new Date(end_date)
+        const end = new Date(end_date);
 
         if (start > end) {
-            return undefined
+            return undefined;
         }
 
         const diffTime = Math.abs(end - start);
@@ -72,13 +72,13 @@
     </x-slot>
 
     <x-modal name="add_new_specialization" focusable>
-        <livewire:doctor-specialization-post/>
+        <livewire:doctor-specialization-post />
     </x-modal>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4">
-                <form action="/doctor" method="POST">
+                <form action="/doctor/create" method="POST">
                     @csrf
 
                     <div class="space-y-12">
@@ -91,7 +91,7 @@
 
                             <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                                 <div class="sm:col-span-3">
-                                    <x-input-label for="name" value="{{ __('Vardas ir pavardė') }}"/>
+                                    <x-input-label for="name" value="{{ __('Vardas ir pavardė') }}" />
                                     <x-text-input
                                         id="name"
                                         name="name"
@@ -100,11 +100,11 @@
                                         value="{{ old('name') }}"
                                         placeholder="{{ __('Vardas ir pavardė') }}"
                                     />
-                                    <x-input-error :messages="$errors->get('name')" class="mt-2"/>
+                                    <x-input-error :messages="$errors->get('name')" class="mt-2" />
                                 </div>
 
                                 <div class="sm:col-span-3">
-                                    <x-input-label for="birth_date" value="{{ __('Gimimo data') }}"/>
+                                    <x-input-label for="birth_date" value="{{ __('Gimimo data') }}" />
                                     <x-text-input
                                         id="birth_date"
                                         name="birth date"
@@ -113,11 +113,11 @@
                                         value="{{ old('birth_date') }}"
                                         placeholder="{{ __('Gimimo data') }}"
                                     />
-                                    <x-input-error :messages="$errors->get('birth_date')" class="mt-2"/>
+                                    <x-input-error :messages="$errors->get('birth_date')" class="mt-2" />
                                 </div>
 
                                 <div class="sm:col-span-3">
-                                    <x-input-label for="email" value="{{ __('Elektroninio pašto adresas') }}"/>
+                                    <x-input-label for="email" value="{{ __('Elektroninio pašto adresas') }}" />
                                     <x-text-input
                                         id="email"
                                         name="email"
@@ -126,11 +126,11 @@
                                         value="{{ old('email') }}"
                                         placeholder="{{ __('Elektroninio pašto adresas') }}"
                                     />
-                                    <x-input-error :messages="$errors->get('email')" class="mt-2"/>
+                                    <x-input-error :messages="$errors->get('email')" class="mt-2" />
                                 </div>
 
                                 <div class="sm:col-span-3">
-                                    <x-input-label for="phone_number" value="{{ __('Telefono numeris') }}"/>
+                                    <x-input-label for="phone_number" value="{{ __('Telefono numeris') }}" />
                                     <x-text-input
                                         id="phone_number"
                                         name="phone number"
@@ -140,14 +140,14 @@
                                         placeholder="{{ __('Telefono numeris') }}"
                                     />
                                     <x-input-error :messages="$errors->get('phone_number')"
-                                                   class="mt-2"/>
+                                                   class="mt-2" />
                                 </div>
 
                                 <div class="sm:col-span-3">
-                                    <x-input-label for="specialization" value="{{ __('Gydytojo specializacija') }}"/>
+                                    <x-input-label for="specialization" value="{{ __('Gydytojo specializacija') }}" />
                                     <livewire:specialization-list :selectedSpecialization="$oldSpecialization">
                                         <x-input-error :messages="$errors->get('specialization')"
-                                                       class="mt-2"/>
+                                                       class="mt-2" />
                                         <button x-data=""
                                                 x-on:click.prevent="$dispatch('open-modal', 'add_new_specialization')"
                                                 type="button"
@@ -157,7 +157,7 @@
                                 </div>
 
                                 <div class="sm:col-span-3">
-                                    <x-input-label for="licence" value="{{ __('Gydytojo licencijos numeris') }}"/>
+                                    <x-input-label for="licence" value="{{ __('Gydytojo licencijos numeris') }}" />
                                     <x-text-input
                                         id="licence"
                                         name="licence"
@@ -166,11 +166,11 @@
                                         value="{{ old('licence') }}"
                                         placeholder="{{ __('Gydytojo licencijos numeris') }}"
                                     />
-                                    <x-input-error :messages="$errors->get('licence')" class="mt-2"/>
+                                    <x-input-error :messages="$errors->get('licence')" class="mt-2" />
                                 </div>
 
                                 <div class="sm:col-span-3" x-data="{ show: false }">
-                                    <x-input-label for="password" value="{{ __('Slaptažodis') }}"/>
+                                    <x-input-label for="password" value="{{ __('Slaptažodis') }}" />
 
                                     <div class="relative mt-1">
                                         <x-text-input
@@ -202,12 +202,12 @@
                                             </svg>
                                         </button>
                                     </div>
-                                    <x-input-error :messages="$errors->get('password')" class="mt-2"/>
+                                    <x-input-error :messages="$errors->get('password')" class="mt-2" />
                                 </div>
 
                                 <div class="sm:col-span-3">
                                     <x-input-label for="password_confirmation"
-                                                   value="{{ __('Pakartoti slaptažodį') }}"/>
+                                                   value="{{ __('Pakartoti slaptažodį') }}" />
                                     <x-text-input
                                         id="password_confirmation"
                                         name="password confirmation"
@@ -217,7 +217,7 @@
                                         placeholder="{{ __('Pakartoti slaptažodį') }}"
                                     />
                                     <x-input-error :messages="$errors->get('repeated-password')"
-                                                   class="mt-2"/>
+                                                   class="mt-2" />
                                 </div>
 
                                 <div class="col-span-full text-right">
@@ -301,16 +301,16 @@
                                     </div>
                                 </template>
                             </div>
-                            <x-input-error :messages="$errors->get('timetables')" class="mt-2"/>
+                            <x-input-error :messages="$errors->get('timetables')" class="mt-2" />
 
                             @error('timetables.*')
-                                <x-input-error :messages="$message" class="mt-2"/>
+                            <x-input-error :messages="$message" class="mt-2" />
                             @enderror
 
                             <div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-6">
                                 <div class="col-span-full grid sm:grid-cols-2 grid-cols-1 gap-x-6 gap-y-2 ">
                                     <div class="sm:col-span-1">
-                                        <x-input-label for="shift_start_time" value="{{ __('Darbo laiko pradžia') }}"/>
+                                        <x-input-label for="shift_start_time" value="{{ __('Darbo laiko pradžia') }}" />
                                         <x-text-input
                                             id="shift_start_time"
                                             name="shift start time"
@@ -321,7 +321,7 @@
                                     </div>
 
                                     <div class="sm:col-span-1">
-                                        <x-input-label for="shift_start_time" value="{{ __('Darbo laiko pabaiga') }}"/>
+                                        <x-input-label for="shift_start_time" value="{{ __('Darbo laiko pabaiga') }}" />
                                         <x-text-input
                                             id="shift_end_time"
                                             name="shift end time"
@@ -340,7 +340,7 @@
 
                                 <div class="col-span-full grid sm:grid-cols-2 grid-cols-1 gap-x-6 gap-y-2 ">
                                     <div class="sm:col-span-1">
-                                        <x-input-label for="job_start_date" value="{{ __('Darbo pradžios data') }}"/>
+                                        <x-input-label for="job_start_date" value="{{ __('Darbo pradžios data') }}" />
                                         <x-text-input
                                             id="job_start_date"
                                             name="job start date"
@@ -352,7 +352,7 @@
                                     </div>
 
                                     <div class="sm:col-span-1">
-                                        <x-input-label for="job_end_date" value="{{ __('Darbo pabaigos data') }}"/>
+                                        <x-input-label for="job_end_date" value="{{ __('Darbo pabaigos data') }}" />
                                         <x-text-input
                                             id="job_end_date"
                                             name="job end date"
@@ -371,7 +371,7 @@
                                     </div>
                                 </div>
                                 <div class="col-span-full">
-                                    <x-input-label for="week_days" value="{{ __('Darbo dienos') }}"/>
+                                    <x-input-label for="week_days" value="{{ __('Darbo dienos') }}" />
                                     <div id="week_days" class="flex gap-2 flex-wrap justify-around mt-2">
                                         @foreach($weekDays as $weekDay)
                                             <div

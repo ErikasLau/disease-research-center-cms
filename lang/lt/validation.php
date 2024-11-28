@@ -254,6 +254,19 @@ return [
             'required' => 'Laukas „Tyrimo komentaras“ yra privalomas.',
             'min' => 'Laukas „Tyrimo komentaras“ privalo būti bent :min simbolių ilgio.',
             'max' => 'Laukas „Tyrimo komentaras“ negali viršyti :max simbolių ribos.',
+        ],
+        'excerpt' => [
+            'required' => 'Laukas „Rezultatai“ yra privalomas.',
+        ],
+        'id' => [
+            'required' => 'Pateikiant užklausą įvyko klaida. Bandykite dar kartą.',
+            'unique' => 'Įrašas negali kartotis.'
+        ],
+        'text' => [
+            'required' => 'Laukas „Rezultatų komentaras“ yra privalomas.',
+        ],
+        'appointment' => [
+            'required' => 'Apdorojant užklausą įvyko klaida.',
         ]
     ],
 

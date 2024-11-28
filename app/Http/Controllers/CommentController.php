@@ -4,17 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Comment;
 use App\Models\Doctor;
-use App\Models\DoctorAppointmentSlot;
 use App\Models\ExaminationStatus;
 use App\Models\Result;
-use App\Rules\VisitUniqueToUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
     //
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $request->validate([
             'id' => ['required', 'unique:comments,result_id'],
             'text' => ['required'],

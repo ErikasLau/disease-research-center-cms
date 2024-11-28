@@ -3,7 +3,9 @@
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\ExaminationController;
+use App\Http\Controllers\LaboratorianController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ResultController;
 use App\Http\Controllers\VisitController;
 use App\Models\Examination;
 use App\Models\Role;
@@ -49,8 +51,18 @@ Route::middleware(['auth', 'restrictRole:' . Role::ADMIN->name])->group(function
         return view('laboratorian.laboratorians');
     })->name('laboratorians');
 
+    Route::get('/doctor/create', function () {
+        return view('doctor.create');
+    })->name('doctor.create');
+
     // Post doctor with doctor work schedules
-    Route::post('/doctor', [DoctorController::class, 'store'])->name('doctor.create');
+    Route::post('/doctor/create', [DoctorController::class, 'store'])->name('doctor.create');
+
+    Route::get('/laboratorian/create', function () {
+        return view('laboratorian.create');
+    })->name('laboratorian.create');
+
+    Route::post('/laboratorian/create', [LaboratorianController::class, 'store'])->name('laboratorian.create');
 });
 
 /**
@@ -88,16 +100,14 @@ Route::middleware(['auth', 'restrictRole:' . Role::PATIENT->name . ',' . Role::D
     // Edit post status
     Route::patch('/visit/{id}', [VisitController::class, 'update'])->name('visit.update');
 
-    Route::get('/doctors', function () {
-        if (Auth::user()->role == Role::PATIENT->name) {
-            return view('doctor.doctors-patients');
-        }
-
-        return view('doctor.doctors');
-    })->name('doctors');
-
     Route::get('/visit/{id}', function (string $id) {
-        $visit = Visit::where('id', $id)->with('doctor.user')->with('doctor.specialization')->with('patient.user')->with('examination.result')->firstOrFail();
+        $user = Auth::user();
+        $visit = Visit::where('id', $id)->firstOrFail();
+
+        if (!($user->role == Role::ADMIN->name || $user->role == Role::LABORATORIAN->name || $visit->doctor->user_id == $user->id
+        || $visit->patient->user_id == $user->id)){
+            return abort(404);
+        }
 
         return view('visit.visit', compact('visit'));
     })->name('visit');
@@ -120,7 +130,16 @@ Route::middleware(['auth', 'restrictRole:' . Role::DOCTOR->name])->group(functio
  */
 Route::middleware(['auth', 'restrictRole:' . Role::LABORATORIAN->name . ',' . Role::DOCTOR->name])->group(function () {
     Route::get('/examination/{id}', function (string $id) {
-        $examination = Examination::where('id', $id)->with('patient.user')->with('result')->with('visit.doctor.user')->firstOrFail();
+        $user = Auth::user();
+        $examination = Examination::where('id', $id)->firstOrFail();
+
+        $doctor = \App\Models\Doctor::where('id', $examination->visit->doctor_id)->firstOrFail();
+        $patient = \App\Models\Patient::where('id', $examination->visit->patient_id)->firstOrFail();
+
+        if (!($user->role == Role::ADMIN->name || $user->role == Role::LABORATORIAN->name || $patient->user_id == $user->id
+            || $doctor->user_id == $user->id)){
+            return abort(404);
+        }
 
         if (Auth::user()->role == Role::LABORATORIAN->name) {
             return view('examination.examination', compact('examination'));
@@ -132,6 +151,25 @@ Route::middleware(['auth', 'restrictRole:' . Role::LABORATORIAN->name . ',' . Ro
     Route::get('/examinations', function () {
         return view('examination.examinations');
     })->name('examinations');
+});
+
+/**
+ * SHARED PAGE BETWEEN PATIENTS AND ADMIN
+ */
+Route::get('/doctors', function () {
+    if (Auth::user()->role == Role::PATIENT->name) {
+        return view('doctor.doctors-patients');
+    }
+
+    return view('doctor.doctors');
+})->middleware(['auth', 'restrictRole:' . Role::LABORATORIAN->name . ',' . Role::ADMIN->name])->name('doctors');
+
+/**
+ * LABORATORIAN PAGES
+ */
+Route::middleware(['auth', 'restrictRole:' . Role::LABORATORIAN->name])->group(function () {
+    Route::patch('/examination/{id}', [ExaminationController::class, 'update'])->name('examination.update');
+    Route::post('/result/create', [ResultController::class, 'store'])->name('result.store');
 });
 
 Route::get('/patient/{id}', function (string $id) {

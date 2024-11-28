@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Examination;
+use App\Models\Role;
 use App\Models\Visit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ExaminationController extends Controller
 {
@@ -27,5 +29,27 @@ class ExaminationController extends Controller
         ]);
 
         return redirect()->back();
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'status' => ['required'],
+        ]);
+
+        if (!$id) {
+            return back()->withErrors(['visit_status' => __('Įvyko klaida apdorojant jūsų užklausą.')]);
+        }
+
+        $examination = Examination::where('id', $id)->firstOrFail();
+
+        if (Auth::user()->role != Role::LABORATORIAN->name) {
+            return back()->withErrors(['status' => 'Jūs turite būti laborantas norėdamas atnaujinti tyrimo informaciją.']);
+        }
+
+        $examination->status = $request->status;
+        $examination->save();
+
+        return back();
     }
 }

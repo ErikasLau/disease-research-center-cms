@@ -43,7 +43,7 @@ class DoctorController extends Controller
 
 
         $user = User::create([
-            'name' => $request->name . " " . $request->last_name,
+            'name' => $request->name,
             'birth_date' => $request->birth_date,
             'email' => $request->email,
             'phone_number' => $request->phone_number,
