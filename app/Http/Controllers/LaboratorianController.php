@@ -2,13 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Doctor;
 use App\Models\Role;
 use App\Models\User;
-use App\Models\WorkSchedule;
-use App\Rules\Timetable;
-use App\Rules\TimetableShiftTime;
-use App\Services\ScheduleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
@@ -39,5 +34,18 @@ class LaboratorianController extends Controller
         ]);
 
         return redirect(route('laboratorians', absolute: false));
+    }
+
+    public function delete(Request $request)
+    {
+        $request->validate([
+            'id' => ['required'],
+        ]);
+
+        $user = User::where('id', $request->id)->firstOrFail();
+
+        $user->delete();
+
+        return redirect()->back()->with('success', 'Laborantas ' . $user->name . ' pašalintas sėkmingai.');
     }
 }

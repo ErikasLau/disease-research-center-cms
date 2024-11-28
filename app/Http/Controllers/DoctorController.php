@@ -79,4 +79,19 @@ class DoctorController extends Controller
 
         return redirect(route('doctors', absolute: false));
     }
+
+    public function delete(Request $request)
+    {
+        $request->validate([
+            'id' => ['required'],
+        ]);
+
+        $doctor = Doctor::where('id', $request->id)->firstOrFail();
+        $user = $doctor->user;
+
+        $doctor->delete();
+        $user->delete();
+
+        return redirect()->back()->with('success', 'Gydytojas ' . $user->name . ' pašalintas sėkmingai.');
+    }
 }

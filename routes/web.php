@@ -4,6 +4,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\ExaminationController;
 use App\Http\Controllers\LaboratorianController;
+use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResultController;
 use App\Http\Controllers\VisitController;
@@ -63,6 +64,10 @@ Route::middleware(['auth', 'restrictRole:' . Role::ADMIN->name])->group(function
     })->name('laboratorian.create');
 
     Route::post('/laboratorian/create', [LaboratorianController::class, 'store'])->name('laboratorian.create');
+
+    Route::delete('/patient', [PatientController::class, 'delete'])->name('patient.delete');
+    Route::delete('/doctor', [DoctorController::class, 'delete'])->name('doctor.delete');
+    Route::delete('/laboratorian', [LaboratorianController::class, 'delete'])->name('laboratorian.delete');
 });
 
 /**
