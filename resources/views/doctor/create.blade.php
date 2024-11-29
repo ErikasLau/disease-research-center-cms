@@ -41,8 +41,8 @@
 
     function getDiff(start_time, end_time) {
         var a = parseTime(start_time), b = parseTime(end_time);
-        if (b < a) // means its the next day.
-            return Math.ceil((limit - a + b) / 60);
+        if (b < a)
+            return undefined;
         else if (b > a)
             return Math.ceil((b - a) / 60);
         else if (b - a == 0)
@@ -232,7 +232,7 @@
                         </div>
 
                         <div class="border-b border-gray-900/10 pb-12"
-                             x-data="{ timetables: @js(old('timetables') ?? []), shift_start_time: @js($date->format('H:i')), shift_end_time: @js(date('H:i', strtotime($date->format('H:i'). ' + 8 hour'))), job_start_date: @js($date->format('Y-m-d')), job_end_date: @js(date('Y-m-d', strtotime($date->format('Y-m-d'). ' + 1 days'))), week_days: [], possible_week_days_array: @js($weekDays) }">
+                             x-data="{ timetables: @js(old('timetables') ?? []), shift_start_time: @js(date('H:i', strtotime('09:00'))), shift_end_time: @js(date('H:i', strtotime('17:00'))), job_start_date: @js($date->format('Y-m-d')), job_end_date: @js(date('Y-m-d', strtotime($date->format('Y-m-d'). ' + 1 days'))), week_days: [], possible_week_days_array: @js($weekDays) }">
                             <h2 class="text-base font-semibold leading-7 text-gray-900">Darbo laiko tvarkaraštis</h2>
                             <p class="mt-1 text-sm leading-6 text-gray-600">Sudarykite gydytojo darbo laiko tvarkaraštį
                                 pasirinkdami darbo dienas, laiką bei laikotarpį.</p>
@@ -331,7 +331,7 @@
                                         />
                                     </div>
                                     <div class="col-span-full font-light text-sm"
-                                         x-show="shift_start_time && shift_end_time">
+                                         x-show="shift_start_time && shift_end_time && shift_start_time < shift_end_time">
                                         <p>Numatytas darbo laikas (suapvalintas į didesnę pusę): <span class="font-bold"
                                                                                                        x-text="getDiff(shift_start_time, shift_end_time)"></span>
                                             valandos</p>

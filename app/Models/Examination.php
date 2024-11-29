@@ -24,7 +24,7 @@ class Examination extends Model
 
     public function patient(): HasOne
     {
-        return $this->hasOne(Patient::class, 'id', 'patient_id');
+        return $this->hasOne(Patient::class, 'id', 'patient_id')->withTrashed();
     }
 
     public function result(): BelongsTo

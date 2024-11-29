@@ -17,7 +17,8 @@ class DoctorAppointmentSlot extends Model
     protected $fillable = [
         'start_time',
         'end_time',
-        'is_available'
+        'is_available',
+        'doctor_id'
     ];
 
     public function doctor(): HasOne

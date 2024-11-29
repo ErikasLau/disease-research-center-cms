@@ -14,7 +14,8 @@ class DoctorSpecializationPostForm extends Form
     #[Validate(['required', 'min: 3'])]
     public $specialization_description = '';
 
-    public function store(){
+    public function store()
+    {
         $this->validate();
 
         DoctorSpecialization::create([

@@ -37,7 +37,7 @@ class ScheduleService
         $slots = [];
         $current_time = $start_timestamp;
 
-        while ($current_time <= $end_timestamp) {
+        while ($current_time+$this->slot_time <= $end_timestamp) {
             $end_slot = $current_time + $this->slot_time; // 1800 seconds = 30 minutes
             $slots[] = [
                 'start' => date('H:i', $current_time),
@@ -63,19 +63,16 @@ class ScheduleService
 
         $currentTime = strtotime('now');
 
+
         if ($shift_end_date < date('Y-m-d', $currentTime) || ($shift_end_date == $currentTime && $shift_end_time < date('H:i', $currentTime))) {
             return $results;
         }
-
-        $shift_start_date = date('Y-m-d');
-        $shift_start_time = date('H:i');
 
         $now = new DateTime();
         $now->modify('+1 month');
         $maxDate = $now->format('Y-m-d');
 
         $shift_end_date = min($shift_end_date, $maxDate);
-
 
         $workingDays = $this->getDaysInInterval(new DateTime($shift_start_date), new DateTime($shift_end_date), $workSchedule->days_of_week);
         $timeSlots = $this->createSlots($shift_start_time, $shift_end_time);

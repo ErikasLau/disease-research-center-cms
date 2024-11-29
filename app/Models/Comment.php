@@ -26,7 +26,7 @@ class Comment extends Model
 
     public function doctor(): HasOne
     {
-        return $this->hasOne(Doctor::class);
+        return $this->hasOne(Doctor::class)->withTrashed();
     }
 
     public $timestamps = true;

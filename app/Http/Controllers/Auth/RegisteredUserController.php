@@ -36,6 +36,7 @@ class RegisteredUserController extends Controller
                 'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
                 'phone_number' => ['required', 'regex:/^\+(?:[0-9] ?){9,12}[0-9]$|^([0-9]{10,12})$|^([0-9]{9})$|^0([0-9]{9})$/', 'unique:' . User::class],
                 'password' => ['required', 'confirmed', Rules\Password::defaults()],
+                'birth_date' => ['required', 'date', 'before_or_equal:18 years ago'],
             ]
         );
 

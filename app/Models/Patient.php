@@ -21,7 +21,7 @@ class Patient extends Model
 
     public function user(): HasOne
     {
-        return $this->HasOne(User::class, 'id', 'user_id');
+        return $this->HasOne(User::class, 'id', 'user_id')->withTrashed();
     }
 
     public function examination(): BelongsToMany

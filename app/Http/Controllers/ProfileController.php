@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,11 +27,20 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $request->validate([
+                'name' => ['required', 'string', 'max:40'],
+                'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
+                'phone_number' => ['required', 'regex:/^\+(?:[0-9] ?){9,12}[0-9]$|^([0-9]{10,12})$|^([0-9]{9})$|^0([0-9]{9})$/', 'unique:' . User::class],
+                'birth_date' => ['required', 'date', 'before_or_equal:18 years ago'],
+            ]
+        );
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
+        $request->user()->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'birth_date' => $request->birth_date,
+            'phone_number' => $request->phone_number,
+        ]);
 
         $request->user()->save();
 

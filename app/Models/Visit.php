@@ -24,12 +24,12 @@ class Visit extends Model
 
     public function doctor(): HasOne
     {
-        return $this->hasOne(Doctor::class, 'id', 'doctor_id');
+        return $this->hasOne(Doctor::class, 'id', 'doctor_id')->withTrashed();
     }
 
     public function patient(): HasOne
     {
-        return $this->hasOne(Patient::class, 'id', 'patient_id');
+        return $this->hasOne(Patient::class, 'id', 'patient_id')->withTrashed();
     }
 
     public function examination(): BelongsTo

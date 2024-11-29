@@ -8,7 +8,9 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResultController;
 use App\Http\Controllers\VisitController;
+use App\Models\Doctor;
 use App\Models\Examination;
+use App\Models\Patient;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Visit;
@@ -109,8 +111,8 @@ Route::middleware(['auth', 'restrictRole:' . Role::PATIENT->name . ',' . Role::D
         $user = Auth::user();
         $visit = Visit::where('id', $id)->firstOrFail();
 
-        if (!($user->role == Role::ADMIN->name || $user->role == Role::LABORATORIAN->name || $visit->doctor->user_id == $user->id
-        || $visit->patient->user_id == $user->id)){
+        if (!($user->role == Role::ADMIN->name || $user->role == Role::LABORATORIAN->name || ($visit->doctor && $visit->doctor->user_id == $user->id)
+        || ($visit->patient && $visit->patient->user_id == $user->id))){
             return abort(404);
         }
 
@@ -138,11 +140,11 @@ Route::middleware(['auth', 'restrictRole:' . Role::LABORATORIAN->name . ',' . Ro
         $user = Auth::user();
         $examination = Examination::where('id', $id)->firstOrFail();
 
-        $doctor = \App\Models\Doctor::where('id', $examination->visit->doctor_id)->firstOrFail();
-        $patient = \App\Models\Patient::where('id', $examination->visit->patient_id)->firstOrFail();
+        $doctor = Doctor::where('id', $examination->visit->doctor_id)->first();
+        $patient = Patient::where('id', $examination->visit->patient_id)->first();
 
-        if (!($user->role == Role::ADMIN->name || $user->role == Role::LABORATORIAN->name || $patient->user_id == $user->id
-            || $doctor->user_id == $user->id)){
+        if (!($user->role == Role::ADMIN->name || $user->role == Role::LABORATORIAN->name || ($patient && $patient->user_id == $user->id)
+            || ($doctor && $doctor->user_id == $user->id))){
             return abort(404);
         }
 
@@ -167,7 +169,7 @@ Route::get('/doctors', function () {
     }
 
     return view('doctor.doctors');
-})->middleware(['auth', 'restrictRole:' . Role::LABORATORIAN->name . ',' . Role::ADMIN->name])->name('doctors');
+})->middleware(['auth', 'restrictRole:' . Role::LABORATORIAN->name . ',' . Role::ADMIN->name . ',' . Role::PATIENT->name])->name('doctors');
 
 /**
  * LABORATORIAN PAGES

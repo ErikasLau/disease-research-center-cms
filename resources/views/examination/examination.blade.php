@@ -1,5 +1,6 @@
 @php
     use App\Models\ExaminationStatus;
+    use App\Models\Patient;
     use App\Models\VisitStatus;
 @endphp
 

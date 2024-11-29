@@ -3,7 +3,6 @@
 namespace App\Livewire;
 
 use App\Livewire\Forms\DoctorSpecializationPostForm;
-use App\Models\DoctorSpecialization;
 use Livewire\Component;
 
 class DoctorSpecializationPost extends Component

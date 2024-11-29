@@ -85,7 +85,7 @@
                                                         <td
                                                             class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-800"
                                                         >
-                                                            {{ $examination->patient->user->name }}
+                                                            {{ $examination->patient ? $examination->patient->user->name : "Pašalintas" }}
                                                         </td>
                                                         <td
                                                             class="whitespace-nowrap px-6 py-4 text-sm text-gray-800"
