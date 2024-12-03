@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Doctor;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\WeekDays;
 use App\Models\WorkSchedule;
 use App\Rules\Timetable;
 use App\Rules\TimetableShiftTime;
@@ -47,13 +48,12 @@ class DoctorController extends Controller
             'birth_date' => $request->birth_date,
             'email' => $request->email,
             'phone_number' => $request->phone_number,
-            'licence' => $request->licence,
             'password' => Hash::make($request->password),
             'role' => Role::DOCTOR->name
         ]);
 
         $doctor = Doctor::create([
-            'license_number' => $request->licence,
+            'licence_number' => $request->licence,
             'user_id' => $user->id,
             'doctor_specialization_id' => $request->specialization
         ]);
@@ -63,9 +63,9 @@ class DoctorController extends Controller
                 $schedule = WorkSchedule::create([
                     'shift_start_time' => $timetable['shift_start_time'],
                     'shift_end_time' => $timetable['shift_end_time'],
-                    'shift_start_date' => $timetable['job_start_date'],
-                    'shift_end_date' => $timetable['job_end_date'],
-                    'days_of_week' => $day,
+                    'shift_start_date' => date('Y-m-d', strtotime($timetable['job_start_date'])),
+                    'shift_end_date' => date('Y-m-d', strtotime($timetable['job_end_date'])),
+                    'days_of_week' => WeekDays::from($day)->name,
                     'doctor_id' => $doctor->id
                 ]);
 

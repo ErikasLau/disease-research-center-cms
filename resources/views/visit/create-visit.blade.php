@@ -78,9 +78,9 @@
                                             <button
                                                 type="button"
                                                 class="inline-flex cursor-pointer items-center rounded-lg p-1 leading-none transition duration-100 ease-in-out hover:bg-gray-200"
-                                                :class="{'cursor-not-allowed opacity-25': month == 0 }"
-                                                :disabled="month == 0 ? true : false"
-                                                @click="month--; getNoOfDays()"
+                                                :class="{'cursor-not-allowed opacity-25': nominal_month === 0 }"
+                                                :disabled="nominal_month === 0"
+                                                @click="prevMonth(); getNoOfDays()"
                                             >
                                                 <svg
                                                     class="inline-flex h-6 w-6 leading-none text-gray-500"
@@ -102,9 +102,9 @@
                                             <button
                                                 type="button"
                                                 class="inline-flex cursor-pointer items-center rounded-lg p-1 leading-none transition duration-100 ease-in-out hover:bg-gray-200"
-                                                :class="{'cursor-not-allowed opacity-25': month == 11 }"
-                                                :disabled="month == 11 ? true : false"
-                                                @click="month++; getNoOfDays()"
+                                                :class="{'cursor-not-allowed opacity-25': nominal_month === 2 }"
+                                                :disabled="nominal_month === 2"
+                                                @click="nextMonth(); getNoOfDays()"
                                             >
                                                 <svg
                                                     class="inline-flex h-6 w-6 leading-none text-gray-500"
@@ -336,6 +336,7 @@
                 selectedDayAppointments: [],
                 register_id: '',
                 register_information: '',
+                nominal_month: 0,
 
                 initDate() {
                     let today = new Date();
@@ -391,6 +392,26 @@
                 openModal(id, text) {
                     this.register_id = id;
                     this.register_information = text;
+                },
+
+                nextMonth() {
+                    this.nominal_month++;
+                    if (this.month === 11) {
+                        this.year = this.year + 1;
+                        this.month = 0;
+                    } else {
+                        this.month++;
+                    }
+                },
+
+                prevMonth() {
+                    this.nominal_month--;
+                    if (this.month === 0) {
+                        this.year = this.year - 1;
+                        this.month = 11;
+                    } else {
+                        this.month--;
+                    }
                 },
 
                 getNoOfDays() {

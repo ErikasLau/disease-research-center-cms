@@ -12,12 +12,16 @@
     use Illuminate\Support\Facades\DB;
 
     $patient = Patient::where("user_id", Auth::id())->first();
-    $completedVisits = Visit::where("patient_id", Auth::user()->patient->id)
-        ->where("visit_date", "<", date("Y-m-d", strtotime("now")))
+
+    $completedVisits = Visit::where("patient_id", $patient->id)
+        ->where(function ($query) {
+            $query->where("visit_date", "<=", date("Y-m-d"))->orWhere("status", VisitStatus::COMPLETED->name);
+        })
         ->orderBy("visit_date", "desc")
         ->take(4)
         ->get();
-    $createdVisits = Visit::where("patient_id", Auth::user()->patient->id)
+
+    $createdVisits = Visit::where("patient_id", $patient->id)
         ->where("patient_id", $patient->id)
         ->where("visit_date", ">=", date("Y-m-d", strtotime("now")))
         ->where("status", VisitStatus::CREATED->name)

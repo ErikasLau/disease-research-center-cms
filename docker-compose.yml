@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3'
 
 services:
     web:
@@ -6,7 +6,7 @@ services:
             context: .
             dockerfile: Dockerfile  # Assuming your Dockerfile is in the root directory
         ports:
-            - "80:80"  # Adjust the port if needed
+            - "81:80"  # Adjust the port if needed
         #volumes:
         #    - .:/var/www/html
         env_file: ".env"
@@ -30,11 +30,12 @@ services:
 
         volumes:
             - ./data/database:/var/lib/mysql:delegated  # Persist data in a local directory
+            - ./data/mysql-scripts:/docker-entrypoint-initdb.d
 
         # **Security Warning:** Exposing ports directly to the host machine is not recommended for production environments. Consider using a reverse proxy or a secure access method.
         ports:
             # Commented out for security reasons. Uncomment if necessary, but use with caution.
-            - "3306:3306"
+            - "3307:3306"
 
         healthcheck:
             test: ["CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized"]

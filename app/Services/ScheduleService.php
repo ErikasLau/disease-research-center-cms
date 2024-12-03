@@ -69,7 +69,7 @@ class ScheduleService
         }
 
         $now = new DateTime();
-        $now->modify('+1 month');
+        $now->modify('+3 month');
         $maxDate = $now->format('Y-m-d');
 
         $shift_end_date = min($shift_end_date, $maxDate);

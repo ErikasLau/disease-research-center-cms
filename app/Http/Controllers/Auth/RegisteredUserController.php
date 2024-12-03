@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Patient;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
@@ -47,6 +48,10 @@ class RegisteredUserController extends Controller
             'birth_date' => $request->birth_date,
             'phone_number' => $request->phone_number,
             'role' => Role::PATIENT->name
+        ]);
+
+        Patient::create([
+           'user_id' => $user->id,
         ]);
 
         event(new Registered($user));

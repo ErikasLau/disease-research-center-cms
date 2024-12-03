@@ -1,6 +1,6 @@
 .git
 node_modules
-data
+data/database
 DockerDatabase
 
 # will be created when building the image

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Examination;
 use App\Models\Role;
 use App\Models\Visit;
+use App\Models\VisitStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,6 +21,9 @@ class ExaminationController extends Controller
         ]);
 
         $visit = Visit::findOrFail($request->id);
+
+        $visit->status = VisitStatus::COMPLETED->name;
+        $visit->save();
 
         Examination::create([
             'type' => $request->examination_type,

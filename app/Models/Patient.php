@@ -16,6 +16,7 @@ class Patient extends Model
     use HasFactory, HasUlids, SoftDeletes;
 
     protected $fillable = [
+        'user_id',
         'medical_history',
     ];
 

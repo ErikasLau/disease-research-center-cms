@@ -66,7 +66,7 @@
                 autocomplete="birth-date"
             />
             <x-input-error
-                :messages="$errors->get('phone_number')"
+                :messages="$errors->get('birth_date')"
                 class="mt-2"
             />
         </div>

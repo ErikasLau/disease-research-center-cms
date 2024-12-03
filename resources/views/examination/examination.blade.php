@@ -261,7 +261,7 @@
                         </div>
                     </div>
                 @endif
-            @elseif ($examination->status != ExaminationStatus::NOT_COMPLETED->name)
+            @elseif ($examination->status == ExaminationStatus::NOT_COMPLETED->name)
                 <div
                     class="mt-4 overflow-hidden bg-white shadow-sm sm:rounded-lg"
                 >
