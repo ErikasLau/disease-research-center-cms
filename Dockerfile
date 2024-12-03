@@ -1,21 +1,3 @@
-# Build step for the frontend using Vite
-FROM node:23-bullseye AS vite-builder
-
-WORKDIR /tmp/project
-
-# Copy over and install dependencies
-COPY package.json /tmp/project/
-COPY package-lock.json /tmp/project/
-RUN npm install
-
-# Copy the rest of the files over
-COPY . /tmp/project
-
-# Build it
-RUN npm run build
-
-
-
 # The website itself
 FROM php:8.3-apache-bullseye
 
@@ -60,3 +42,19 @@ RUN php artisan
 RUN chown -R www-data:www-data /var/www/html
 
 CMD ["apache2-foreground"]
+
+# Build step for the frontend using Vite
+FROM node:23-bullseye AS vite-builder
+
+WORKDIR /tmp/project
+
+# Copy over and install dependencies
+COPY package.json /tmp/project/
+COPY package-lock.json /tmp/project/
+RUN npm install
+
+# Copy the rest of the files over
+COPY . /tmp/project
+
+# Build it
+RUN npm run build
