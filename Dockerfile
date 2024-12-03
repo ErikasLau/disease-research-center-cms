@@ -1,5 +1,19 @@
+# Build step for the frontend using Vite
+FROM node:23-bullseye AS vite-builder
+
 # The website itself
 FROM php:8.3-apache-bullseye
+
+COPY --from=vite-builder /usr/local/lib/node_modules /usr/local/lib/node_modules
+COPY --from=vite-builder /usr/local/include/node /usr/local/include/node
+COPY --from=vite-builder /usr/local/share/man/man1/node.1 /usr/local/share/man/man1/node.1
+COPY --from=vite-builder /usr/local/share/doc/node /usr/local/share/doc/node
+COPY --from=vite-builder /usr/local/bin/node /usr/local/bin/node
+COPY --from=vite-builder /opt/ /opt/
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
+RUN ln -s /opt/yarn-$(ls /opt/ | grep yarn | sed 's/yarn-//')/bin/yarn /usr/local/bin/yarn
+RUN ln -s /opt/yarn-$(ls /opt/ | grep yarn | sed 's/yarn-//')/bin/yarnpkg /usr/local/bin/yarnpkg
 
 # Install required zip development package
 RUN apt-get update
@@ -28,7 +42,10 @@ COPY . /var/www/html
 RUN composer install
 
 # Copy built public content from vite-builder step
-COPY --from=vite-builder /tmp/project/public/build public/build
+COPY package.json /tmp/project/
+COPY package-lock.json /tmp/project/
+RUN npm install
+RUN npm run build
 
 # Run database seed
 RUN php artisan
@@ -43,18 +60,6 @@ RUN chown -R www-data:www-data /var/www/html
 
 CMD ["apache2-foreground"]
 
-# Build step for the frontend using Vite
-FROM node:23-bullseye AS vite-builder
+
 
 WORKDIR /tmp/project
-
-# Copy over and install dependencies
-COPY package.json /tmp/project/
-COPY package-lock.json /tmp/project/
-RUN npm install
-
-# Copy the rest of the files over
-COPY . /tmp/project
-
-# Build it
-RUN npm run build
