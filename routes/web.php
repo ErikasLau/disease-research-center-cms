@@ -9,25 +9,101 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResultController;
 use App\Http\Controllers\VisitController;
 use App\Models\Doctor;
+use App\Models\DoctorAppointmentSlot;
+use App\Models\DoctorSpecialization;
 use App\Models\Examination;
+use App\Models\ExaminationStatus;
 use App\Models\Patient;
+use App\Models\Result;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Visit;
+use App\Models\VisitStatus;
+use App\Models\WeekDays;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/login');
 
 Route::get('/dashboard', function () {
     if (Auth::user()->role == Role::LABORATORIAN->name) {
-        return view('dashboard.laborant-dashboard');
+        $examinations = Examination::take(8)
+            ->orderBy("created_at", "DESC")
+            ->get();
+
+        return view('dashboard.laborant-dashboard', compact('examinations'));
     } elseif (Auth::user()->role == Role::DOCTOR->name) {
-        return view('dashboard.doctor-dashboard');
+        $doctor = Auth::user()->doctor;
+
+        $visits = Visit::orderBy("visit_date", "desc")
+            ->where("doctor_id", $doctor->id)
+            ->take(8)
+            ->get();
+
+        $examinations = Examination::where("status", ExaminationStatus::SENT_TO_CONFIRM->name)
+            ->whereHas("visit", function ($query) use ($doctor) {
+                $query->where("doctor_id", $doctor->id);
+            })
+            ->orderBy("created_at", "desc")
+            ->take(8)
+            ->get();
+
+        return view('dashboard.doctor-dashboard', compact('visits', 'examinations'));
     } elseif (Auth::user()->role == Role::ADMIN->name) {
-        return view('dashboard.admin-dashboard');
+        $patients_count = Patient::count();
+        $doctors_count = Doctor::count();
+        $laboratorians_count = User::where("role", Role::LABORATORIAN->name)->count();
+        $admins_count = User::where("role", Role::ADMIN->name)->count();
+
+        $visits_count = Visit::count();
+        $examinations_count = Examination::count();
+        $results_count = Result::count();
+
+        return view('dashboard.admin-dashboard', compact('patients_count', 'doctors_count', 'laboratorians_count', 'admins_count', 'visits_count', 'examinations_count', 'results_count'));
     } else {
-        return view('dashboard.patient-dashboard');
+        $patient = Patient::where("user_id", Auth::id())->first();
+
+        $completedVisits = Visit::where("patient_id", $patient->id)
+            ->where(function ($query) {
+                $query->where("visit_date", "<=", date("Y-m-d"))->orWhere("status", VisitStatus::COMPLETED->name);
+            })
+            ->orderBy("visit_date", "desc")
+            ->take(4)
+            ->get();
+
+        $createdVisits = Visit::where("patient_id", $patient->id)
+            ->where("patient_id", $patient->id)
+            ->where("visit_date", ">=", date("Y-m-d", strtotime("now")))
+            ->where("status", VisitStatus::CREATED->name)
+            ->orderBy("visit_date", "ASC")
+            ->take(4)
+            ->get();
+
+        $nextTime = DB::table("doctor_appointment_slots")
+            ->select(DB::raw("MIN(start_time) as start_time"), "doctor_id")
+            ->where("doctor_appointment_slots.start_time", ">=", date("Y-m-d H:i", strtotime("now")))
+            ->where("doctor_appointment_slots.is_available", true)
+            ->groupBy("doctor_appointment_slots.doctor_id");
+
+        $users = DB::table("users")
+            ->where("role", Role::DOCTOR->name)
+            ->select("users.name", "doctor_specializations.name as specialization_name", "next_time.start_time", "doctors.id as doctor_id")
+            ->join("doctors", function (JoinClause $join) {
+                $join->on("users.id", "=", "doctors.user_id");
+            })
+            ->join("doctor_specializations", function (JoinClause $join) {
+                $join->on("doctors.doctor_specialization_id", "=", "doctor_specializations.id");
+            })
+            ->rightJoinSub($nextTime, "next_time", function (JoinClause $join) {
+                $join->on("doctor_id", "=", "doctors.id");
+            })
+            ->orderBy("next_time.start_time", "ASC")
+            ->take(8)
+            ->get();
+
+        return view('dashboard.patient-dashboard', compact('completedVisits', 'createdVisits', 'users'));
     }
 })->middleware(['auth'])->name('dashboard');
 
@@ -46,16 +122,32 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'restrictRole:' . Role::ADMIN->name])->group(function () {
     // All patients page
     Route::get('/patients', function () {
-        return view('patient.patients');
+        if (Auth::user()->patient) {
+            $patients = Patient::where("id", "!=", Auth::user()->patient->id)->paginate(15);
+        } else {
+            $patients = Patient::paginate(15);
+        }
+
+        return view('patient.patients', compact('patients'));
     })->name('patients');
 
     // All laboratorians page
     Route::get('/laboratorians', function () {
-        return view('laboratorian.laboratorians');
+        $users = User::where("role", Role::LABORATORIAN->name)
+            ->orderBy("created_at", "DESC")
+            ->paginate(15);
+
+        return view('laboratorian.laboratorians', compact('users'));
     })->name('laboratorians');
 
     Route::get('/doctor/create', function () {
-        return view('doctor.create');
+        $specializations = DoctorSpecialization::all();
+        $weekDays = WeekDays::values();
+
+        $date = new DateTime("now", new DateTimeZone('Europe/Vilnius'));
+        $oldSpecialization = old('specialization');
+
+        return view('doctor.create', compact('specializations', 'weekDays', 'date', 'oldSpecialization'));
     })->name('doctor.create');
 
     // Post doctor with doctor work schedules
@@ -78,22 +170,55 @@ Route::middleware(['auth', 'restrictRole:' . Role::ADMIN->name])->group(function
 Route::middleware(['auth', 'restrictRole:' . Role::PATIENT->name])->group(function () {
     // Patient treatment history
     Route::get('patient/treatment-history', function () {
-        return view('patient.treatment-history');
+        $visits = Visit::where("patient_id", Auth::user()->patient->id)
+            ->orderBy("visit_date", "DESC")
+            ->take(8)
+            ->get();
+        $examinations = Examination::where("patient_id", Auth::user()->patient->id)
+            ->take(8)
+            ->get();
+
+        return view('patient.treatment-history', compact('visits', 'examinations'));
     })->name('treatment-history');
 
     // Patient treatment history. All visits
     Route::get('patient/treatment-history/visits', function () {
-        return view('patient.treatment-history-visits');
+        $visits = Visit::where("patient_id", Auth::user()->patient->id)
+            ->orderBy("visit_date", "desc")
+            ->paginate(15);
+
+        return view('patient.treatment-history-visits', compact('visits'));
     })->name('treatment-history-visits');
 
     // Patient treatment history. All examinations
     Route::get('patient/treatment-history/examinations', function () {
-        return view('patient.treatment-history-examinations');
+        $examinations = Examination::where("patient_id", Auth::user()->patient->id)
+            ->orderBy("created_at", "DESC")
+            ->paginate(15);
+
+        return view('patient.treatment-history-examinations', compact('examinations'));
     })->name('treatment-history-examinations');
 
     // Doctor possible visit times page
     Route::get('/doctor/{id}/visit', function (string $id) {
-        return view('visit.create-visit', compact('id'));
+            $doctor = Doctor::where("id", $id)->first();
+        $appointments = DoctorAppointmentSlot::where("doctor_id", $id)
+            ->with("doctor.specialization")
+            ->with("doctor.user")
+            ->where("start_time", ">=", date("Y-m-d H:i", strtotime("now")))
+            ->where("is_available", true)
+            ->orderBy("start_time", "ASC")
+            ->get();
+
+        $unique_dates = [];
+        foreach ($appointments as $appointment) {
+            $appointment->start_time = date("Y-m-d H:i", strtotime($appointment->start_time));
+            $date_only = date("Y-m-d", strtotime($appointment->start_time));
+            $unique_dates[$date_only] = $date_only;
+        }
+        $unique_dates = array_values($unique_dates);
+
+        return view('visit.create-visit', compact('id', 'doctor', 'appointments', 'unique_dates'));
     })->name('create-visit');
 
     // Create visit
@@ -112,22 +237,32 @@ Route::middleware(['auth', 'restrictRole:' . Role::PATIENT->name . ',' . Role::D
         $visit = Visit::where('id', $id)->firstOrFail();
 
         if (!($user->role == Role::ADMIN->name || $user->role == Role::LABORATORIAN->name || ($visit->doctor && $visit->doctor->user_id == $user->id)
-        || ($visit->patient && $visit->patient->user_id == $user->id))){
+            || ($visit->patient && $visit->patient->user_id == $user->id))) {
             return abort(404);
         }
 
-        return view('visit.visit', compact('visit'));
-    })->name('visit');
+        $visitStatus = VisitStatus::getOptions();
+        $visitStatusToChange = [VisitStatus::CREATED->name, VisitStatus::CANCELED->name];
 
-    Route::get('/visits', function () {
-        return view('visit.visits');
-    })->name('visits');
+        return view('visit.visit', compact('visit', 'visitStatus', 'visitStatusToChange'));
+    })->name('visit');
 });
 
 /**
  * DOCTORS PAGES
  */
 Route::middleware(['auth', 'restrictRole:' . Role::DOCTOR->name])->group(function () {
+    Route::get('/visits', function () {
+
+        //Load visits
+        $doctor = Auth::user()->doctor;
+        $visits = Visit::where("doctor_id", $doctor->id)
+            ->orderBy("visit_date", "DESC")
+            ->paginate(15);
+
+        return view('visit.visits', compact('visits'));
+    })->name('visits');
+
     Route::post('/examination/create', [ExaminationController::class, 'store'])->name('examination.store');
     Route::post('/comment/create', [CommentController::class, 'store'])->name('comment.store');
 });
@@ -144,19 +279,38 @@ Route::middleware(['auth', 'restrictRole:' . Role::LABORATORIAN->name . ',' . Ro
         $patient = Patient::where('id', $examination->visit->patient_id)->first();
 
         if (!($user->role == Role::ADMIN->name || $user->role == Role::LABORATORIAN->name || ($patient && $patient->user_id == $user->id)
-            || ($doctor && $doctor->user_id == $user->id))){
+            || ($doctor && $doctor->user_id == $user->id))) {
             return abort(404);
         }
 
         if (Auth::user()->role == Role::LABORATORIAN->name) {
-            return view('examination.examination', compact('examination'));
+            $visitStatus = VisitStatus::values();
+            $examinationStatus = [ExaminationStatus::NOT_COMPLETED->name, ExaminationStatus::IN_PROGRESS->name];
+
+            return view('examination.examination', compact('examination', 'visitStatus', 'examinationStatus'));
         }
 
-        return view('examination.examination-doctor', compact('examination'));
+        $visitStatus = VisitStatus::values();
+        $examinationStatus = ExaminationStatus::getOptions();
+
+        return view('examination.examination-doctor', compact('examination', 'visitStatus', 'examinationStatus'));
     });
 
     Route::get('/examinations', function () {
-        return view('examination.examinations');
+        $user = Auth::user();
+        if ($user->role === Role::DOCTOR->name) {
+            $doctor = Auth::user()->doctor;
+
+            $examinations = Examination::whereHas("visit", function ($query) use ($doctor) {
+                $query->where("doctor_id", $doctor->id);
+            })
+                ->orderBy("created_at", "DESC")
+                ->paginate(15);
+        } else {
+            $examinations = Examination::orderBy("created_at", "DESC")->paginate(15);
+        }
+
+        return view('examination.examinations', compact('user', 'examinations'));
     })->name('examinations');
 });
 
@@ -165,10 +319,34 @@ Route::middleware(['auth', 'restrictRole:' . Role::LABORATORIAN->name . ',' . Ro
  */
 Route::get('/doctors', function () {
     if (Auth::user()->role == Role::PATIENT->name) {
-        return view('doctor.doctors-patients');
+        $nextTime = DB::table("doctor_appointment_slots")
+            ->select(DB::raw("MIN(start_time) as start_time"), "doctor_id")
+            ->where("doctor_appointment_slots.start_time", ">=", date("Y-m-d H:i", strtotime("now")))
+            ->where("doctor_appointment_slots.is_available", true)
+            ->groupBy("doctor_appointment_slots.doctor_id");
+
+        $users = DB::table("users")
+            ->where("role", Role::DOCTOR->name)
+            ->select("users.name", "doctor_specializations.name as specialization_name", "next_time.start_time", "doctors.id as doctor_id")
+            ->join("doctors", function (JoinClause $join) {
+                $join->on("users.id", "=", "doctors.user_id");
+            })
+            ->join("doctor_specializations", function (JoinClause $join) {
+                $join->on("doctors.doctor_specialization_id", "=", "doctor_specializations.id");
+            })
+            ->leftJoinSub($nextTime, "next_time", function (JoinClause $join) {
+                $join->on("doctor_id", "=", "doctors.id");
+            })
+            ->orderByRaw("COALESCE(next_time.start_time, '9999-12-31 23:59:59') ASC")
+            ->orderBy("specialization_name", "ASC")
+            ->paginate(15);
+
+        return view('doctor.doctors-patients', compact('users'));
     }
 
-    return view('doctor.doctors');
+    $doctors = Doctor::orderBy("created_at", "DESC")->paginate(15);
+
+    return view('doctor.doctors', compact('doctors'));
 })->middleware(['auth', 'restrictRole:' . Role::LABORATORIAN->name . ',' . Role::ADMIN->name . ',' . Role::PATIENT->name])->name('doctors');
 
 /**

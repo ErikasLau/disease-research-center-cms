@@ -1,69 +1,3 @@
-@php
-    use App\Models\DoctorSpecialization;use App\Models\WeekDays;
-    $specializations = DoctorSpecialization::all();
-    $weekDays = WeekDays::values();
-
-    $date = new DateTime("now", new DateTimeZone('Europe/Vilnius'));
-    $oldSpecialization = old('specialization');
-@endphp
-
-<script>
-    function generateRandomPassword(length, includeUppercase, includeLowercase, includeNumbers, includeSpecialChars) {
-        const uppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        const lowercaseChars = "abcdefghijklmnopqrstuvwxyz";
-        const numberChars = "0123456789";
-        const specialChars = "!@#$%^&*()-=_+[]{}|;:,.<>?/";
-
-        let allChars = "";
-        let password = "";
-
-        if (includeUppercase) allChars += uppercaseChars;
-        if (includeLowercase) allChars += lowercaseChars;
-        if (includeNumbers) allChars += numberChars;
-        if (includeSpecialChars) allChars += specialChars;
-
-        const allCharsLength = allChars.length;
-
-        for (let i = 0; i < length; i++) {
-            const randomIndex = Math.floor(window.crypto.getRandomValues(new Uint32Array(1))[0] / (0xFFFFFFFF + 1) * allCharsLength);
-            password += allChars.charAt(randomIndex);
-        }
-
-        return password;
-    }
-
-    function parseTime(s) {
-        var c = s.split(":");
-        return parseInt(c[0]) * 60 + parseInt(c[1]);
-    }
-
-    var limit = parseTime("23:59");
-
-    function getDiff(start_time, end_time) {
-        var a = parseTime(start_time), b = parseTime(end_time);
-        if (b < a)
-            return undefined;
-        else if (b > a)
-            return Math.ceil((b - a) / 60);
-        else if (b - a == 0)
-            return 24.0;
-    }
-
-    function getDiffDate(start_date, end_date) {
-        const start = new Date(start_date);
-        const end = new Date(end_date);
-
-        if (start > end) {
-            return undefined;
-        }
-
-        const diffTime = Math.abs(end - start);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-
-        return diffDays;
-    }
-</script>
-
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -375,7 +309,7 @@
                                     <div id="week_days" class="flex gap-2 flex-wrap justify-around mt-2">
                                         @foreach($weekDays as $weekDay)
                                             <div
-                                                class="flex items-center ps-4 border border-gray-200 bg-gray-50 hover:bg-gray-100 duration-150 rounded dark:border-gray-700 min-w-[160px]">
+                                                class="flex items-center ps-4 border border-gray-200 bg-gray-50 hover:bg-gray-100 duration-150 rounded dark:border-gray-700 min-w-[150px]">
                                                 <input id="bordered-radio-{{$weekDay['value']}}" type="checkbox"
                                                        value="{{$weekDay['value']}}" name="bordered-radio"
                                                        x-model="week_days"
@@ -415,4 +349,60 @@
             </div>
         </div>
     </div>
+    <script>
+        function generateRandomPassword(length, includeUppercase, includeLowercase, includeNumbers, includeSpecialChars) {
+            const uppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const lowercaseChars = "abcdefghijklmnopqrstuvwxyz";
+            const numberChars = "0123456789";
+            const specialChars = "!@#$%^&*()-=_+[]{}|;:,.<>?/";
+
+            let allChars = "";
+            let password = "";
+
+            if (includeUppercase) allChars += uppercaseChars;
+            if (includeLowercase) allChars += lowercaseChars;
+            if (includeNumbers) allChars += numberChars;
+            if (includeSpecialChars) allChars += specialChars;
+
+            const allCharsLength = allChars.length;
+
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(window.crypto.getRandomValues(new Uint32Array(1))[0] / (0xFFFFFFFF + 1) * allCharsLength);
+                password += allChars.charAt(randomIndex);
+            }
+
+            return password;
+        }
+
+        function parseTime(s) {
+            var c = s.split(":");
+            return parseInt(c[0]) * 60 + parseInt(c[1]);
+        }
+
+        var limit = parseTime("23:59");
+
+        function getDiff(start_time, end_time) {
+            var a = parseTime(start_time), b = parseTime(end_time);
+            if (b < a)
+                return undefined;
+            else if (b > a)
+                return Math.ceil((b - a) / 60);
+            else if (b - a == 0)
+                return 24.0;
+        }
+
+        function getDiffDate(start_date, end_date) {
+            const start = new Date(start_date);
+            const end = new Date(end_date);
+
+            if (start > end) {
+                return undefined;
+            }
+
+            const diffTime = Math.abs(end - start);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+            return diffDays;
+        }
+    </script>
 </x-app-layout>

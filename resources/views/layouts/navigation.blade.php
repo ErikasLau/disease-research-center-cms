@@ -177,6 +177,59 @@
             >
                 {{ __("Valdymo skydas") }}
             </x-responsive-nav-link>
+            @if (Auth::user()->role == Role::PATIENT->name)
+                <x-responsive-nav-link
+                    :href="route('doctors')"
+                    :active="request()->routeIs('doctors')"
+                >
+                    {{ __("Visi gydytojai") }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link
+                    :href="route('treatment-history')"
+                    :active="request()->routeIs('treatment-history')"
+                >
+                    {{ __("Gydimo istorija") }}
+                </x-responsive-nav-link>
+            @elseif (Auth::user()->role == Role::DOCTOR->name)
+                <x-responsive-nav-link
+                    :href="route('visits')"
+                    :active="request()->routeIs('visits')"
+                >
+                    {{ __("Visi vizitai") }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link
+                    :href="route('examinations')"
+                    :active="request()->routeIs('examinations')"
+                >
+                    {{ __("Visi tyrimai") }}
+                </x-responsive-nav-link>
+            @elseif (Auth::user()->role == Role::LABORATORIAN->name)
+                <x-responsive-nav-link
+                    :href="route('examinations')"
+                    :active="request()->routeIs('examinations')"
+                >
+                    {{ __("Visi tyrimai") }}
+                </x-responsive-nav-link>
+            @elseif (Auth::user()->role == Role::ADMIN->name)
+                <x-responsive-nav-link
+                    :href="route('patients')"
+                    :active="request()->routeIs('patients')"
+                >
+                    {{ __("Pacientai") }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link
+                    :href="route('doctors')"
+                    :active="request()->routeIs('doctors')"
+                >
+                    {{ __("Gydytojai") }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link
+                    :href="route('laboratorians')"
+                    :active="request()->routeIs('laboratorians')"
+                >
+                    {{ __("Laborantai") }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

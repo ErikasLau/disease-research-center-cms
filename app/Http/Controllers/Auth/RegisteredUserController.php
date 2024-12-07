@@ -51,7 +51,7 @@ class RegisteredUserController extends Controller
         ]);
 
         Patient::create([
-           'user_id' => $user->id,
+            'user_id' => $user->id,
         ]);
 
         event(new Registered($user));

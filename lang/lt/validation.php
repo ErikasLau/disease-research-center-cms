@@ -197,6 +197,12 @@ return [
             'current_password' => 'Slaptažodis neteisingas.',
             'min' => 'Slaptažodis turi būti bent :min simbolių ilgio.'
         ],
+        'current_password' => [
+            'required' => 'Lauką „Esamas slaptažodis“ privaloma užpildyti.',
+            'confirmed' => 'Slaptažodžiai nesutampa.',
+            'current_password' => 'Slaptažodis neteisingas.',
+            'min' => 'Slaptažodis turi būti bent :min simbolių ilgio.'
+        ],
         'specialization_name' => [
             'required' => 'Lauką „Specializacija“ privaloma užpildyti.',
             'min' => 'Laukas „Specializacija“ privalo būti bent :min simbolių ilgio.',
