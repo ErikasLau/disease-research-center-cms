@@ -31,6 +31,7 @@ class VisitUniqueToUser implements ValidationRule
 
         $existingVisit = Visit::where('patient_id', $patient->id)
             ->where('status', '!=', VisitStatus::CANCELED->name)
+            ->where('status', '!=', VisitStatus::COMPLETED->name)
             ->where('doctor_id', $doctorId)
             ->where('visit_date', '>=', now())
             ->first();
@@ -42,6 +43,7 @@ class VisitUniqueToUser implements ValidationRule
         $newStartTime = Carbon::parse($value->start_time)->subMinutes(30);
         $visitAtThatTime = Visit::where('patient_id', $patient->id)
             ->where('status', '!=', VisitStatus::CANCELED->name)
+            ->where('status', '!=', VisitStatus::COMPLETED->name)
             ->whereBetween('visit_date', [$newStartTime, $value->end_time])
             ->first();
 
